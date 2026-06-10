@@ -81,6 +81,7 @@ class PrayerAssembler implements IPrayerAssembler {
         resolvedText: _assembleSections(segment.sections, contextKeys),
         optional: entry.optional || segment.optional,
         groupId: effectiveGroup,
+        collapsibleWhen: entry.collapsibleWhen,
       ));
     }
 

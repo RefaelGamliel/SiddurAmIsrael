@@ -3,11 +3,20 @@
   "name": "תחנון",
   "segments": [
     {
+      "segment_id": "tachanun_header",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
       "segment_id": "vidui_yud_gimel_midot",
       "condition_flags": [
         "with_minyan"
       ],
-      "exclude_flags": [],
+      "exclude_flags": [
+        "userSkipTachanun"
+      ],
       "optional": false,
       "allowed_nusach": []
     },
@@ -23,7 +32,9 @@
       "condition_flags": [
         "monday_thursday"
       ],
-      "exclude_flags": [],
+      "exclude_flags": [
+        "userSkipTachanun"
+      ],
       "optional": false,
       "allowed_nusach": []
     },

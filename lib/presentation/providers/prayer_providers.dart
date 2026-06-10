@@ -256,12 +256,19 @@ final isShaliachTzibburProvider = NotifierProvider<_PersistentNotifier<bool>, bo
   ),
 );
 
-final einKohanumProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
-  () => _PersistentNotifier<bool>(
-    read: (r) => r.getEinKohanim(),
-    write: (r, v) => r.setEinKohanim(v),
-  ),
-);
+/// User toggle: "אין כהנים" (no kohanim present).
+/// AutoDispose: resets to false when prayer screen unmounts.
+final einKohanimProvider = StateProvider.autoDispose<bool>((ref) => false);
+
+/// User toggle: "אין תחנון" (skip tachanun) for Shacharit.
+/// AutoDispose: resets to false when prayer screen unmounts.
+final skipTachanunShacharitProvider =
+    StateProvider.autoDispose<bool>((ref) => false);
+
+/// User toggle: "אין תחנון" (skip tachanun) for Mincha.
+/// AutoDispose: resets to false when prayer screen unmounts.
+final skipTachanunMinchaProvider =
+    StateProvider.autoDispose<bool>((ref) => false);
 
 /// Selected city id for the Hebrew calendar's zmanim (default Jerusalem).
 final selectedCityIdProvider =
@@ -494,7 +501,8 @@ final shacharitProvider = FutureProvider<List<AssembledSegment>>((ref) {
   final baseCtx = ref.watch(userContextProvider);
   final wearsTallitGadol = ref.watch(wearsTallitGadolProvider);
   final isShaliachTzibbur = ref.watch(isShaliachTzibburProvider);
-  final einKohanim = ref.watch(einKohanumProvider);
+  final einKohanim = ref.watch(einKohanimProvider);
+  final skipTachanun = ref.watch(skipTachanunShacharitProvider);
   final isMale = baseCtx.gender == Gender.male;
   final extra = [
     DayFlag.serviceShacharit,
@@ -506,6 +514,7 @@ final shacharitProvider = FutureProvider<List<AssembledSegment>>((ref) {
       DayFlag.wearsTallitGadol,
     if (isMale && isShaliachTzibbur) DayFlag.isShaliachTzibbur,
     if (einKohanim) DayFlag.einKohanim,
+    if (skipTachanun) 'userSkipTachanun',
   ];
   final ctx = _ctxWithExtraFlags(baseCtx, extra);
   return assembler.assemble(
@@ -517,6 +526,7 @@ final shacharitProvider = FutureProvider<List<AssembledSegment>>((ref) {
 final minchaProvider = FutureProvider<List<AssembledSegment>>((ref) {
   final assembler = ref.watch(prayerAssemblerProvider);
   final baseCtx = ref.watch(userContextProvider);
+  final skipTachanun = ref.watch(skipTachanunMinchaProvider);
   // Inject Mincha-specific flags. tisha_beav is a whole-day flag, but Nachem
   // (and EM's Tisha B'Av chatima) only enter the bracha at Mincha.
   final ctx = _ctxWithExtraFlags(
@@ -524,6 +534,7 @@ final minchaProvider = FutureProvider<List<AssembledSegment>>((ref) {
     [
       DayFlag.serviceMincha,
       if (baseCtx.activeFlags.contains('tisha_beav')) 'tisha_beav_mincha',
+      if (skipTachanun) 'userSkipTachanun',
     ],
   );
   return assembler.assemble(templateId: 'mincha', userContext: ctx);

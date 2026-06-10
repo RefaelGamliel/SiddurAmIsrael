@@ -70,7 +70,8 @@
       "sub_template_id": "tachanun_ashkenaz",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun"
+        "skip_tachanun",
+        "userSkipTachanun"
       ],
       "optional": false,
       "allowed_nusach": []

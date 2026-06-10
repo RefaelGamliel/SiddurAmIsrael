@@ -31,6 +31,12 @@ FutureProvider<List<AssembledSegment>> _providerFor(PrayerService s) =>
 
 /// Builds the reading screen for [service], wrapped RTL so the Hebrew prayer
 /// text always renders right-to-left regardless of the interface language.
+String? _prayerTypeFor(PrayerService s) => switch (s) {
+      PrayerService.shacharit => 'shacharit',
+      PrayerService.mincha => 'mincha',
+      _ => null,
+    };
+
 Widget buildPrayerReader(
   PrayerService service,
   String title, {
@@ -41,6 +47,7 @@ Widget buildPrayerReader(
       child: PrayerScreen(
         title: title,
         contentProvider: _providerFor(service),
+        prayerType: _prayerTypeFor(service),
         onOpenSettings: onOpenSettings,
       ),
     );

@@ -65,7 +65,7 @@ const _navSpecs = <_NavSpec>[
   _NavSpec('modim_derabanan',       'מודים דרבנן'),
   _NavSpec('birkat_kohanim',        'ברכת כהנים'),
   // ── Post-amidah ─────────────────────────────────────────────────────────
-  _NavSpec('tachanun',              'תחנון'),
+  _NavSpec('tachanun_header',       'תחנון'),
   _NavSpec('kriat_hatorah_hotzaah', 'קריאת התורה'),
   _NavSpec('ashrei',                'אשרי',    occurrence: 1), // 2nd = after musaf
   // שיר של יום — exactly one day-variant fires per service.
@@ -104,11 +104,13 @@ class PrayerScreen extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.contentProvider,
+    this.prayerType,
     this.onOpenSettings,
   });
 
   final String title;
   final FutureProvider<List<AssembledSegment>> contentProvider;
+  final String? prayerType;
   final VoidCallback? onOpenSettings;
 
   @override
@@ -167,6 +169,15 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
     );
   }
 
+  void _showPrayerSettings(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => _PrayerSettingsDialog(
+        prayerType: widget.prayerType,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final prayerAsync = ref.watch(widget.contentProvider);
@@ -202,6 +213,12 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
                         background: HalachicHeader(),
                         collapseMode: CollapseMode.pin,
                       ),
+                      actions: [
+                        IconButton(
+                          icon: const Icon(Icons.settings),
+                          onPressed: () => _showPrayerSettings(context),
+                        ),
+                      ],
                     ),
                     prayerAsync.when(
                       // Inline toggles change a watched provider → the prayer
@@ -740,6 +757,84 @@ class _NavSheet extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ── Prayer Settings Dialog ────────────────────────────────────────────────────
+
+class _PrayerSettingsDialog extends ConsumerWidget {
+  const _PrayerSettingsDialog({
+    this.prayerType,
+  });
+
+  final String? prayerType;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Only show the tachanun toggle for prayers that have tachanun.
+    if (prayerType != 'shacharit' && prayerType != 'mincha') {
+      return const SizedBox.shrink();
+    }
+
+    final skipTachanun = prayerType == 'shacharit'
+        ? ref.watch(skipTachanunShacharitProvider)
+        : ref.watch(skipTachanunMinchaProvider);
+
+    return AlertDialog(
+      title: const Text(
+        'הגדרות זמניות',
+        textDirection: TextDirection.rtl,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'הגדרות אלו זמניות ויאופסו עם היציאה מהתפילה',
+            textDirection: TextDirection.rtl,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.grey,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 20),
+          CheckboxListTile(
+            title: const Text(
+              'אין תחנון',
+              textDirection: TextDirection.rtl,
+            ),
+            value: skipTachanun,
+            onChanged: (v) {
+              final next = v ?? false;
+              if (prayerType == 'shacharit') {
+                ref.read(skipTachanunShacharitProvider.notifier).state = next;
+              } else {
+                ref.read(skipTachanunMinchaProvider.notifier).state = next;
+              }
+            },
+            controlAffinity: ListTileControlAffinity.leading,
+            contentPadding: EdgeInsets.zero,
+            activeColor: AppColors.primary,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text(
+            'חזור',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(color: AppColors.primary),
+          ),
+        ),
+      ],
     );
   }
 }

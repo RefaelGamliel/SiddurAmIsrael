@@ -12,5 +12,10 @@ class AssembledSegment with _$AssembledSegment {
     // 'chazarat_hashatz'). Consecutive segments with the same groupId are
     // rendered as a single accordion by the presentation layer.
     @Default('') String groupId,
+    // If non-empty, this segment should render as an accordion (collapsible)
+    // when the specified flag is active in the user context. E.g.,
+    // collapsibleWhen='userSkipTachanun' makes the segment collapsible when
+    // tachanun is skipped.
+    @Default('') String collapsibleWhen,
   }) = _AssembledSegment;
 }

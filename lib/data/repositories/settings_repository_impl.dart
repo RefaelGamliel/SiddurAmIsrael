@@ -101,10 +101,10 @@ class SettingsRepositoryImpl implements ISettingsRepository {
       _ds.writeIsShaliachTzibbur(value);
 
   @override
-  bool getEinKohanim() => _ds.readEinKohanim();
+  bool getEinKohanim() => false;
 
   @override
-  Future<void> setEinKohanim(bool value) => _ds.writeEinKohanim(value);
+  Future<void> setEinKohanim(bool value) => Future.value();
 
   static const _defaultLocationCity = 'jerusalem';
 

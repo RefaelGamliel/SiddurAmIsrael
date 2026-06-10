@@ -113,7 +113,8 @@
       "sub_template_id": "tachanun_ashkenaz",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun"
+        "skip_tachanun",
+        "userSkipTachanun"
       ],
       "optional": false,
       "allowed_nusach": [
@@ -124,7 +125,8 @@
       "sub_template_id": "tachanun_sfard",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun"
+        "skip_tachanun",
+        "userSkipTachanun"
       ],
       "optional": false,
       "allowed_nusach": [
@@ -135,7 +137,8 @@
       "sub_template_id": "tachanun_edot_mizrach",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun"
+        "skip_tachanun",
+        "userSkipTachanun"
       ],
       "optional": false,
       "allowed_nusach": [

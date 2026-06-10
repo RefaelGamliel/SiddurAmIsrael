@@ -262,6 +262,7 @@ const _segmentLabels = <String, String>{
   'amidah_musaf_intermediate_chm_pesach': 'חול המועד פסח',
   'amidah_musaf_intermediate_chm_sukkot': 'חול המועד סוכות',
   // ── Tachanun ───────────────────────────────────────────────────────────────
+  'tachanun_header': 'תחנון',
   'tachanun': 'תחנון',
   'tachanun_nfilat_apayim': 'נפילת אפים',
   'tachanun_monday_thursday_addition': '',
@@ -407,4 +408,7 @@ const _segmentLabels = <String, String>{
   'hoshanot_day_5': 'הושענות',
   'hoshanot_day_6': 'הושענות',
   'hoshanot_hoshana_rabba': 'הושענות — הושענא רבא',
+
+  // ── Selichot (collapsible omitted sections) ─────────────────────────────────
+  'selichot_closing_omitted': 'קטעים מושמטים',
 };

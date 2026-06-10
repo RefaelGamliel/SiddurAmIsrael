@@ -129,56 +129,25 @@ class _PrayerInlineToggle extends ConsumerWidget {
       return _buildMeeinToggle(ref);
     }
     final (label, value, onChanged) = _resolve(ref);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Material(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Row(
-            textDirection: TextDirection.rtl,
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  textDirection: TextDirection.rtl,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.primaryDarker,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Transform.scale(
-                scale: 0.8,
-                child: Switch(
-                  value: value,
-                  onChanged: onChanged,
-                  activeColor: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return _InlineCheckRow(
+      label: label,
+      value: value,
+      onChanged: onChanged,
     );
   }
 
   Widget _buildKohanumToggle(WidgetRef ref) {
-    final einKohanim = ref.watch(einKohanumProvider);
-    final yeshKohanim = !einKohanim;
+    final einKohanim = ref.watch(einKohanimProvider);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: Material(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(10),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Row(
             textDirection: TextDirection.rtl,
             children: [
-              // Section title on the right
               const Text(
                 'ברכת כהנים',
                 style: TextStyle(
@@ -188,32 +157,12 @@ class _PrayerInlineToggle extends ConsumerWidget {
                 ),
               ),
               const Spacer(),
-              // "יש כהנים" label + switch
-              GestureDetector(
-                onTap: () => ref
-                    .read(einKohanumProvider.notifier)
-                    .set(yeshKohanim),
-                child: Text(
-                  'יש כהנים',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: yeshKohanim
-                        ? AppColors.primaryDarker
-                        : AppColors.primaryDarker.withValues(alpha: 0.45),
-                    fontWeight: yeshKohanim
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                  ),
-                ),
-              ),
-              Transform.scale(
-                scale: 0.8,
-                child: Switch(
-                  value: yeshKohanim,
-                  onChanged: (v) =>
-                      ref.read(einKohanumProvider.notifier).set(!v),
-                  activeColor: AppColors.primary,
-                ),
+              _InlineCheckRow(
+                label: 'אין כהנים',
+                value: einKohanim,
+                onChanged: (v) {
+                  ref.read(einKohanimProvider.notifier).state = v;
+                },
               ),
             ],
           ),
@@ -458,9 +407,9 @@ class _PrayerInlineToggle extends ConsumerWidget {
         );
       case 'inline_toggle_kohanim':
         return (
-          'יש כהנים',
-          !ref.watch(einKohanumProvider),
-          (v) => ref.read(einKohanumProvider.notifier).set(!v),
+          'אין כהנים',
+          ref.watch(einKohanimProvider),
+          (v) => ref.read(einKohanimProvider.notifier).state = v,
         );
       default:
         return ('', false, (_) {});
@@ -477,6 +426,55 @@ const _inlineToggleIds = {
   'inline_toggle_dining',
   'inline_toggle_meein',
 };
+
+/// Compact checkbox row used for in-prayer boolean choices (e.g. "אין כהנים",
+/// "אני שליח ציבור", "אין תחנון"). Label is on the right (RTL), checkbox on the
+/// left. The entire row is tappable.
+class _InlineCheckRow extends StatelessWidget {
+  const _InlineCheckRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final void Function(bool) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          textDirection: TextDirection.rtl,
+          children: [
+            Text(
+              label,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 14,
+                color: value
+                    ? AppColors.primaryDarker
+                    : AppColors.primaryDarker.withValues(alpha: 0.55),
+                fontWeight: value ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+            Checkbox(
+              value: value,
+              onChanged: (v) => onChanged(v ?? false),
+              activeColor: AppColors.primary,
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class PrayerTextWidget extends ConsumerWidget {
   const PrayerTextWidget({super.key, required this.segment});

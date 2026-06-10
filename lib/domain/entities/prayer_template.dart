@@ -30,6 +30,10 @@ class TemplateEntry with _$TemplateEntry {
     // expansion) will carry this groupId, causing them to be grouped into a
     // single collapsible accordion in the presentation layer.
     @Default('') @JsonKey(name: 'group_id') String groupId,
+    // If non-empty, this segment becomes collapsible when the specified flag
+    // is present in contextKeys. When the flag is active, the segment renders
+    // as a collapsed accordion. When inactive, it renders normally in the flow.
+    @Default('') @JsonKey(name: 'collapsible_when') String collapsibleWhen,
   }) = _TemplateEntry;
 
   factory TemplateEntry.fromJson(Map<String, dynamic> json) =>
