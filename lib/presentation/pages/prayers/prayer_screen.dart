@@ -18,7 +18,20 @@ const _groupTitles = <String, String>{
   'ketoret_group': 'פרשת הקטורת',
   'pitum_group': 'פטום הקטורת',
   'eizehu_group': 'איזהו מקומן',
+  'tachanun': 'תחנון',
+  'zimmun': 'זימון',
 };
+
+// Group accordions that open by default (the user can still collapse them).
+const _defaultOpenGroups = <String>{'tachanun'};
+
+// Titles for nested sub-accordions rendered INSIDE a group accordion.
+const _subGroupTitles = <String, String>{
+  'vidui': 'וידוי וי״ג מידות',
+};
+
+// Sub-accordions that open by default. Those absent here start collapsed.
+const _subGroupDefaultOpen = <String>{};
 
 // ── Nav anchors ───────────────────────────────────────────────────────────────
 // Defines WHICH segments appear as nav list items and with what label.
@@ -104,13 +117,11 @@ class PrayerScreen extends ConsumerStatefulWidget {
     super.key,
     required this.title,
     required this.contentProvider,
-    this.prayerType,
     this.onOpenSettings,
   });
 
   final String title;
   final FutureProvider<List<AssembledSegment>> contentProvider;
-  final String? prayerType;
   final VoidCallback? onOpenSettings;
 
   @override
@@ -169,15 +180,6 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
     );
   }
 
-  void _showPrayerSettings(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => _PrayerSettingsDialog(
-        prayerType: widget.prayerType,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final prayerAsync = ref.watch(widget.contentProvider);
@@ -213,12 +215,6 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
                         background: HalachicHeader(),
                         collapseMode: CollapseMode.pin,
                       ),
-                      actions: [
-                        IconButton(
-                          icon: const Icon(Icons.settings),
-                          onPressed: () => _showPrayerSettings(context),
-                        ),
-                      ],
                     ),
                     prayerAsync.when(
                       // Inline toggles change a watched provider → the prayer
@@ -497,7 +493,10 @@ class _GroupAccordionState extends ConsumerState<_GroupAccordion> {
   @override
   void initState() {
     super.initState();
-    _expanded = ref.read(expandedSegmentsProvider).contains(_persistKey);
+    // Default-open groups start expanded; the user can still collapse them.
+    final defaultOpen = _defaultOpenGroups.contains(widget.groupId);
+    _expanded =
+        defaultOpen || ref.read(expandedSegmentsProvider).contains(_persistKey);
   }
 
   @override
@@ -552,14 +551,121 @@ class _GroupAccordionState extends ConsumerState<_GroupAccordion> {
                 ],
               ),
             ),
-            children: [
-              for (var i = 0; i < widget.segments.length; i++)
-                PrayerTextWidget(
-                  key: widget.childKeys[i],
-                  segment: widget.segments[i],
-                ),
-            ],
+            children: _buildChildren(),
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the group's children, coalescing consecutive segments that share a
+  /// non-empty subGroupId into a single nested accordion (e.g. vidui inside
+  /// tachanun). Plain segments render as individual [PrayerTextWidget]s.
+  List<Widget> _buildChildren() {
+    final segs = widget.segments;
+    final out = <Widget>[];
+    var i = 0;
+    while (i < segs.length) {
+      final sub = segs[i].subGroupId;
+      if (sub.isNotEmpty) {
+        final run = <AssembledSegment>[];
+        while (i < segs.length && segs[i].subGroupId == sub) {
+          run.add(segs[i]);
+          i++;
+        }
+        out.add(_SubGroupAccordion(subGroupId: sub, segments: run));
+      } else {
+        out.add(PrayerTextWidget(
+          key: widget.childKeys[i],
+          segment: segs[i],
+        ));
+        i++;
+      }
+    }
+    return out;
+  }
+}
+
+// ── Nested sub-group accordion ────────────────────────────────────────────────
+// A second-level accordion rendered INSIDE a group accordion (e.g. the
+// "וידוי וי״ג מידות" block inside the open "תחנון" group). Title from
+// [_subGroupTitles]; default open/closed from [_subGroupDefaultOpen]; open
+// state persisted under a 'subgroup:<id>' key.
+
+class _SubGroupAccordion extends ConsumerStatefulWidget {
+  const _SubGroupAccordion({
+    required this.subGroupId,
+    required this.segments,
+  });
+
+  final String subGroupId;
+  final List<AssembledSegment> segments;
+
+  @override
+  ConsumerState<_SubGroupAccordion> createState() => _SubGroupAccordionState();
+}
+
+class _SubGroupAccordionState extends ConsumerState<_SubGroupAccordion> {
+  late bool _expanded;
+
+  String get _persistKey => 'subgroup:${widget.subGroupId}';
+
+  @override
+  void initState() {
+    super.initState();
+    final defaultOpen = _subGroupDefaultOpen.contains(widget.subGroupId);
+    _expanded =
+        defaultOpen || ref.read(expandedSegmentsProvider).contains(_persistKey);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final factor = ref.watch(fontSizeFactorProvider);
+    final title = _subGroupTitles[widget.subGroupId] ?? widget.subGroupId;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          tilePadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          childrenPadding: EdgeInsets.zero,
+          initiallyExpanded: _expanded,
+          shape: const Border(),
+          collapsedShape: const Border(),
+          onExpansionChanged: (v) {
+            setState(() => _expanded = v);
+            final saved =
+                ref.read(expandedSegmentsProvider).contains(_persistKey);
+            if (v != saved) {
+              ref.read(expandedSegmentsProvider.notifier).toggle(_persistKey);
+            }
+          },
+          title: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Row(
+              children: [
+                Icon(
+                  _expanded ? Icons.expand_less : Icons.expand_more,
+                  color: AppColors.primary,
+                  size: 18 * factor,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: AppColors.primary,
+                    fontSize: 13 * factor,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          children: [
+            for (final seg in widget.segments)
+              PrayerTextWidget(segment: seg),
+          ],
         ),
       ),
     );
@@ -757,84 +863,6 @@ class _NavSheet extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-// ── Prayer Settings Dialog ────────────────────────────────────────────────────
-
-class _PrayerSettingsDialog extends ConsumerWidget {
-  const _PrayerSettingsDialog({
-    this.prayerType,
-  });
-
-  final String? prayerType;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Only show the tachanun toggle for prayers that have tachanun.
-    if (prayerType != 'shacharit' && prayerType != 'mincha') {
-      return const SizedBox.shrink();
-    }
-
-    final skipTachanun = prayerType == 'shacharit'
-        ? ref.watch(skipTachanunShacharitProvider)
-        : ref.watch(skipTachanunMinchaProvider);
-
-    return AlertDialog(
-      title: const Text(
-        'הגדרות זמניות',
-        textDirection: TextDirection.rtl,
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'הגדרות אלו זמניות ויאופסו עם היציאה מהתפילה',
-            textDirection: TextDirection.rtl,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 20),
-          CheckboxListTile(
-            title: const Text(
-              'אין תחנון',
-              textDirection: TextDirection.rtl,
-            ),
-            value: skipTachanun,
-            onChanged: (v) {
-              final next = v ?? false;
-              if (prayerType == 'shacharit') {
-                ref.read(skipTachanunShacharitProvider.notifier).state = next;
-              } else {
-                ref.read(skipTachanunMinchaProvider.notifier).state = next;
-              }
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-            contentPadding: EdgeInsets.zero,
-            activeColor: AppColors.primary,
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text(
-            'חזור',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(color: AppColors.primary),
-          ),
-        ),
-      ],
     );
   }
 }

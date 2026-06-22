@@ -168,7 +168,19 @@ class HalachicCalendarService implements ICalendarFlagProvider {
   // combined parshiot we collapse to the FIRST single (Tazria-Metzora →
   // tazria) per the standard Mon/Thu rule.
   String? _computeUpcomingParshah(JewishCalendar cal) {
-    final p = cal.getParshah();
+    // getParshah() returns a parsha only ON Shabbat (NONE on weekdays). On a
+    // weekday we advance to the upcoming Shabbat to find the sidra that is
+    // read this coming Monday/Thursday. inIsrael must be preserved because the
+    // parsha scheme differs between Israel and chu"l.
+    JewishCalendar shabbatCal = cal;
+    final dow = cal.getDayOfWeek(); // 1 = Sunday … 7 = Saturday
+    if (dow != 7) {
+      final shabbatDate =
+          cal.getGregorianCalendar().add(Duration(days: 7 - dow));
+      shabbatCal = JewishCalendar.fromDateTime(shabbatDate)
+        ..inIsrael = cal.inIsrael;
+    }
+    final p = shabbatCal.getParshah();
     if (p == Parsha.NONE) return null;
     // Combined → first single.
     const collapsed = <Parsha, Parsha>{

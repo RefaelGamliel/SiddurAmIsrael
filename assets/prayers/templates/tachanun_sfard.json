@@ -13,9 +13,7 @@
       "condition_flags": [
         "with_minyan"
       ],
-      "exclude_flags": [
-        "userSkipTachanun"
-      ],
+      "exclude_flags": [],
       "optional": false,
       "allowed_nusach": [],
       "sub_template_id": "tachanun_vidui"
@@ -41,18 +39,14 @@
       "condition_flags": [
         "monday_thursday"
       ],
-      "exclude_flags": [
-        "userSkipTachanun"
-      ],
+      "exclude_flags": [],
       "optional": false,
       "allowed_nusach": []
     },
     {
       "segment_id": "shomer_yisrael",
       "condition_flags": [],
-      "exclude_flags": [
-        "userSkipTachanun"
-      ],
+      "exclude_flags": [],
       "optional": false,
       "allowed_nusach": []
     }

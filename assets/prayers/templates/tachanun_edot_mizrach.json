@@ -14,9 +14,7 @@
       "condition_flags": [
         "with_minyan"
       ],
-      "exclude_flags": [
-        "userSkipTachanun"
-      ],
+      "exclude_flags": [],
       "optional": false,
       "allowed_nusach": []
     },
@@ -28,13 +26,11 @@
       "allowed_nusach": []
     },
     {
-      "segment_id": "tachanun_em_selichot_monday_thursday",
+      "sub_template_id": "tachanun_em_selichot_monday_thursday",
       "condition_flags": [
         "monday_thursday"
       ],
-      "exclude_flags": [
-        "userSkipTachanun"
-      ],
+      "exclude_flags": [],
       "optional": false,
       "allowed_nusach": []
     },

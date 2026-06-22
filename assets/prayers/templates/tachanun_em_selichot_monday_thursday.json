@@ -1,0 +1,56 @@
+{
+  "id": "tachanun_em_selichot_monday_thursday",
+  "name": "סליחות שני וחמישי",
+  "segments": [
+    {
+      "segment_id": "el_melech_yoshev_em_montue",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "yud_gimel_midot",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "selichot_em_anshei_emunah",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "el_melech_yoshev_em_montue",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "yud_gimel_midot",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "selichot_em_tamahnu",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "el_melech_yoshev_em_montue",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "yud_gimel_midot",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "selichot_em_eloheinu_al_taas",
+      "condition_flags": [],
+      "exclude_flags": []
+    },
+    {
+      "segment_id": "selichot_em_mt_closing",
+      "condition_flags": [],
+      "exclude_flags": []
+    }
+  ]
+}

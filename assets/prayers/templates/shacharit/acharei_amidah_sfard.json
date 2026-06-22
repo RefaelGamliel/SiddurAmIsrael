@@ -33,8 +33,7 @@
         "with_minyan"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ]
     },
     {
@@ -44,8 +43,7 @@
         "with_minyan"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ]
     },
     {
@@ -55,8 +53,7 @@
         "with_minyan"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ]
     },
     {
@@ -75,11 +72,11 @@
       "sub_template_id": "tachanun_sfard",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
-      "allowed_nusach": []
+      "allowed_nusach": [],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "chatzi_kaddish",
@@ -87,8 +84,7 @@
         "with_minyan"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ]
     },
     {
@@ -261,8 +257,7 @@
         "kriat_hatorah"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
       "allowed_nusach": []
@@ -645,10 +640,9 @@
         "with_minyan"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
-      "optional": false,
+      "optional": true,
       "allowed_nusach": []
     },
     {

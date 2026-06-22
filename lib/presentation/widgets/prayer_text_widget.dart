@@ -11,7 +11,15 @@ import 'package:siddur_am_israel_chai/presentation/theme/app_colors.dart';
 import 'package:siddur_am_israel_chai/presentation/widgets/rich_prayer_text.dart';
 
 // Optional segments that should start EXPANDED (open accordion by default).
-const _initiallyExpanded = <String>{'birkat_kohanim_bracha'};
+const _initiallyExpanded = <String>{
+  'birkat_kohanim_bracha',
+  // Mon/Thu "יהי רצון" before the 2nd Ashrei (Ashkenaz + Sfard).
+  'yehi_ratzon_mon_thu',
+  // "למנצח" in Edot Mizrach Shacharit (optional only on the EM template).
+  'lamenatzeach',
+  // End-of-selichot block ("א-ל רחום שמך…") on fast days (Ashkenaz/Sfard).
+  'selichot_shared_7',
+};
 
 // Segments that are part of a tight block: no trailing spacer so consecutive
 // segments flow without visual gaps. (Continuous in-line flow of a single
@@ -69,24 +77,15 @@ class _PrayerInlineToggle extends ConsumerWidget {
     if (segmentId == 'inline_toggle_kohanim') {
       return _buildKohanumToggle(ref);
     }
-    // Birkat HaMazon meal-context selectors.
+    // Birkat HaMazon meal-type selector (שבע ברכות / ברית מילה).
     // "רגילה" is not shown — it is the implicit default when nothing is
     // selected. Tapping the active chip deselects it (resets to regular).
     if (segmentId == 'inline_toggle_meal_type') {
       final value = ref.watch(mealTypeProvider);
-      final nusach = ref.watch(nusachProvider);
-      // EM has no distinct seudat-mitzvah text — only sheva brachot / brit
-      // milah produce different content, so that option is omitted there.
-      final options = nusach == 'edot_mizrach'
-          ? const [
-              (MealType.shevaBrachot, 'שבע ברכות'),
-              (MealType.britMilah, 'ברית מילה'),
-            ]
-          : const [
-              (MealType.seudatMitzvah, 'סעודת מצוה'),
-              (MealType.shevaBrachot, 'שבע ברכות'),
-              (MealType.britMilah, 'ברית מילה'),
-            ];
+      const options = [
+        (MealType.shevaBrachot, 'שבע ברכות'),
+        (MealType.britMilah, 'ברית מילה'),
+      ];
       return _buildSegmentedChoice<MealType>(
         current: value,
         options: options,
@@ -94,34 +93,7 @@ class _PrayerInlineToggle extends ConsumerWidget {
           // Tap selected chip → deselect (regular). Tap other → select.
           final next = v == value ? MealType.regular : v;
           ref.read(mealTypeProvider.notifier).set(next);
-          if (next == MealType.shevaBrachot || next == MealType.britMilah) {
-            ref.read(zimmunModeProvider.notifier).set(ZimmunMode.ten);
-          }
         },
-      );
-    }
-    if (segmentId == 'inline_toggle_zimmun') {
-      final value = ref.watch(zimmunModeProvider);
-      return _buildSegmentedChoice<ZimmunMode>(
-        current: value,
-        options: const [
-          (ZimmunMode.individual, 'ביחיד'),
-          (ZimmunMode.three, 'זימון בשלושה'),
-          (ZimmunMode.ten, 'זימון בעשרה'),
-        ],
-        onSelect: (v) => ref.read(zimmunModeProvider.notifier).set(v),
-      );
-    }
-    if (segmentId == 'inline_toggle_dining') {
-      final value = ref.watch(diningStatusProvider);
-      return _buildSegmentedChoice<DiningStatus>(
-        current: value,
-        options: const [
-          (DiningStatus.ownTable, 'על שולחני'),
-          (DiningStatus.parentsTable, 'על שולחן הורַי'),
-          (DiningStatus.guest, 'אורח'),
-        ],
-        onSelect: (v) => ref.read(diningStatusProvider.notifier).set(v),
       );
     }
     // Me'ein Shalosh: multi-select food types + small Eretz-Yisrael toggles.
@@ -422,8 +394,6 @@ const _inlineToggleIds = {
   'inline_toggle_shaliach_tzibbur',
   'inline_toggle_kohanim',
   'inline_toggle_meal_type',
-  'inline_toggle_zimmun',
-  'inline_toggle_dining',
   'inline_toggle_meein',
 };
 
@@ -512,6 +482,13 @@ class PrayerTextWidget extends ConsumerWidget {
         );
       }
       return tile;
+    }
+
+    // Pure nav-anchor segments (empty body + no visible label, e.g.
+    // `tachanun_header`) occupy no vertical space. They still attach their
+    // GlobalKey so the section-nav jump can scroll to them.
+    if (segment.resolvedText.isEmpty && label.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     final noTrailing = _noTrailingSpace.contains(segment.id);

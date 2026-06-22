@@ -70,11 +70,11 @@
       "sub_template_id": "tachanun_ashkenaz",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
-      "allowed_nusach": []
+      "allowed_nusach": [],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "chatzi_kaddish",
@@ -600,7 +600,7 @@
       "exclude_flags": [
         "skip_tachanun"
       ],
-      "optional": false,
+      "optional": true,
       "allowed_nusach": []
     },
     {

@@ -6,17 +6,16 @@
       "sub_template_id": "tachanun_edot_mizrach",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
-      "allowed_nusach": []
+      "allowed_nusach": [],
+      "group_id": "tachanun"
     },
     {
       "segment_id": "yehi_shem",
       "condition_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "exclude_flags": [],
       "optional": false,
@@ -28,8 +27,7 @@
         "with_minyan"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
       "allowed_nusach": []
@@ -222,8 +220,7 @@
         "kriat_hatorah"
       ],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
       "allowed_nusach": []
@@ -570,10 +567,9 @@
       "segment_id": "lamenatzeach",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_lamenatzeach",
-        "userSkipTachanun"
+        "skip_lamenatzeach"
       ],
-      "optional": false,
+      "optional": true,
       "allowed_nusach": []
     },
     {

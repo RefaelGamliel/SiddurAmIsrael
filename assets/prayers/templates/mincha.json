@@ -113,37 +113,37 @@
       "sub_template_id": "tachanun_ashkenaz",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
       "allowed_nusach": [
         "ashkenaz"
-      ]
+      ],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "tachanun_sfard",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
       "allowed_nusach": [
         "sfard"
-      ]
+      ],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "tachanun_edot_mizrach",
       "condition_flags": [],
       "exclude_flags": [
-        "skip_tachanun",
-        "userSkipTachanun"
+        "skip_tachanun"
       ],
       "optional": false,
       "allowed_nusach": [
         "edot_mizrach"
-      ]
+      ],
+      "group_id": "tachanun"
     },
     {
       "segment_id": "avinu_malkeinu",
