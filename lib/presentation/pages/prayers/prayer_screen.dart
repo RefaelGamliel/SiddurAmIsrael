@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:siddur_am_israel_chai/domain/entities/assembled_segment.dart';
 import 'package:siddur_am_israel_chai/presentation/i18n/app_strings.dart';
+import 'package:siddur_am_israel_chai/presentation/pages/compass/compass_screen.dart';
 import 'package:siddur_am_israel_chai/presentation/providers/prayer_providers.dart';
 import 'package:siddur_am_israel_chai/presentation/theme/app_colors.dart';
 import 'package:siddur_am_israel_chai/presentation/widgets/font_size_fab.dart';
@@ -213,6 +214,19 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
                           ),
                         ),
                         centerTitle: true,
+                        actions: [
+                          IconButton(
+                            icon: const Icon(Icons.explore),
+                            tooltip: ref
+                                .read(appStringsProvider)
+                                .t('compass_tooltip'),
+                            onPressed: () => Navigator.of(context).push(
+                              MaterialPageRoute<void>(
+                                builder: (_) => const CompassScreen(),
+                              ),
+                            ),
+                          ),
+                        ],
                         flexibleSpace: const FlexibleSpaceBar(
                           background: HalachicHeader(),
                           collapseMode: CollapseMode.pin,

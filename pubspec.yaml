@@ -42,6 +42,9 @@ dependencies:
   # Device location for the calendar's optional GPS zmanim (used on-device only)
   geolocator: ^13.0.0
 
+  # Magnetometer heading for the Har HaBayit prayer-direction compass
+  flutter_compass: ^0.8.0
+
 # ─────────────────────────────────────────────────────────────────────────────
 # DEV / BUILD-TIME DEPENDENCIES
 # Code generation: dart run build_runner build --delete-conflicting-outputs

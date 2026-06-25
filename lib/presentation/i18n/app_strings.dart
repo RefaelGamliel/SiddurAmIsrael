@@ -292,6 +292,43 @@ const Map<String, Map<String, String>> _table = {
     'ru': 'Поддержка',
     'fr': 'Support',
   },
+  // ── Compass (prayer direction toward Har HaBayit) ───────────────────────
+  'compass_title': {
+    'he': 'כיוון התפילה',
+    'en': 'Prayer direction',
+    'ru': 'Направление молитвы',
+    'fr': 'Direction de la prière',
+  },
+  'compass_tooltip': {
+    'he': 'כיוון התפילה',
+    'en': 'Prayer direction',
+    'ru': 'Направление молитвы',
+    'fr': 'Direction de la prière',
+  },
+  'compass_facing': {
+    'he': 'אתה פונה להר הבית',
+    'en': "You're facing the Temple Mount",
+    'ru': 'Вы обращены к Храмовой горе',
+    'fr': 'Vous êtes face au mont du Temple',
+  },
+  'compass_instruction': {
+    'he': 'סובב את המכשיר עד שהחץ פונה כלפי מעלה',
+    'en': 'Turn the device until the arrow points up',
+    'ru': 'Поворачивайте устройство, пока стрелка не укажет вверх',
+    'fr': "Tournez l'appareil jusqu'à ce que la flèche pointe vers le haut",
+  },
+  'compass_no_sensor': {
+    'he': 'אין חיישן מצפן במכשיר זה',
+    'en': 'This device has no compass sensor',
+    'ru': 'На этом устройстве нет датчика компаса',
+    'fr': "Cet appareil n'a pas de boussole",
+  },
+  'compass_location_note': {
+    'he': 'הכיוון מבוסס על המיקום שהוגדר בהגדרות',
+    'en': 'Direction is based on the location set in Settings',
+    'ru': 'Направление основано на местоположении из настроек',
+    'fr': 'La direction est basée sur le lieu défini dans les réglages',
+  },
 };
 
 /// Resolves framework-UI strings for the active interface language.
