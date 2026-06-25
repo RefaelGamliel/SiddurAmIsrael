@@ -32,6 +32,7 @@ import 'package:siddur_am_israel_chai/domain/services/i_calendar_flag_provider.d
 import 'package:siddur_am_israel_chai/domain/services/i_prayer_assembler.dart';
 import 'package:siddur_am_israel_chai/domain/services/prayer_assembler.dart';
 import 'package:siddur_am_israel_chai/domain/services/service_time_resolver.dart';
+import 'package:siddur_am_israel_chai/presentation/providers/calendar_providers.dart';
 
 // ── Dev date/time override (debug builds only) ───────────────────────────────
 
@@ -61,8 +62,8 @@ DateTime _halachicNow(Ref ref) {
   final city = cityById(ref.watch(selectedCityIdProvider));
   final geo =
       GeoLocation.setLocation(city.name, city.latitude, city.longitude, now);
-  final tzeit = ComplexZmanimCalendar.intGeoLocation(geo)
-      .getTzaisGeonim8Point5Degrees();
+  final tzeit =
+      ComplexZmanimCalendar.intGeoLocation(geo).getTzaisGeonim8Point5Degrees();
   final base = (tzeit != null && !now.isBefore(tzeit))
       ? now.add(const Duration(days: 1))
       : now;
@@ -110,7 +111,8 @@ final sukkotKorbanotDatasourceProvider = Provider<SukkotKorbanotDatasource>(
 );
 
 final sukkotKorbanotRepositoryProvider = Provider<ISukkotKorbanotRepository>(
-  (ref) => SukkotKorbanotRepositoryImpl(ref.watch(sukkotKorbanotDatasourceProvider)),
+  (ref) =>
+      SukkotKorbanotRepositoryImpl(ref.watch(sukkotKorbanotDatasourceProvider)),
 );
 
 final graSsyDatasourceProvider = Provider<GraSsyDatasource>(
@@ -175,12 +177,11 @@ final nusachProvider = NotifierProvider<_PersistentNotifier<String>, String>(
   ),
 );
 
-final isInIsraelProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
-  () => _PersistentNotifier<bool>(
-    read: (r) => r.getIsInIsrael(),
-    write: (r, v) => r.setIsInIsrael(v),
-  ),
-);
+/// Whether the user is in Eretz Yisrael — derived from the effective location
+/// (GPS when enabled, otherwise the selected city), not a manual toggle.
+/// Drives the Israel/chu"l liturgical differences (Yom Tov Sheni, etc.).
+final isInIsraelProvider =
+    Provider<bool>((ref) => ref.watch(effectiveCityProvider).inIsrael);
 
 final userGenderProvider =
     NotifierProvider<_PersistentNotifier<Gender>, Gender>(
@@ -268,7 +269,8 @@ final expandedSegmentsProvider =
 /// Whether the user wears a tallit gadol (default true).
 /// Used to inject [DayFlag.wearsTallitGadol] into the Shacharit context for
 /// Ashkenaz/Sfard, gating the seder atifat tallit gadol accordion.
-final isShaliachTzibburProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
+final isShaliachTzibburProvider =
+    NotifierProvider<_PersistentNotifier<bool>, bool>(
   () => _PersistentNotifier<bool>(
     read: (r) => r.getIsShaliachTzibbur(),
     write: (r, v) => r.setIsShaliachTzibbur(v),
@@ -297,7 +299,8 @@ final locationModeProvider =
   ),
 );
 
-final wearsTallitGadolProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
+final wearsTallitGadolProvider =
+    NotifierProvider<_PersistentNotifier<bool>, bool>(
   () => _PersistentNotifier<bool>(
     read: (r) => r.getWearsTallitGadol(),
     write: (r, v) => r.setWearsTallitGadol(v),
@@ -316,7 +319,8 @@ class _TransientNotifier<T> extends Notifier<T> {
   void set(T value) => state = value;
 }
 
-final mealTypeProvider = NotifierProvider<_TransientNotifier<MealType>, MealType>(
+final mealTypeProvider =
+    NotifierProvider<_TransientNotifier<MealType>, MealType>(
   () => _TransientNotifier<MealType>(MealType.regular),
 );
 
@@ -534,7 +538,7 @@ final minchaProvider = FutureProvider<List<AssembledSegment>>((ref) {
     DateTime motzaei, bool inIsrael) {
   const blockedMonths = {
     JewishDate.TISHREI: [1, 2, 10, 15, 22], // RH, YK, Sukkot1, SA
-    JewishDate.NISSAN: [15, 21],             // Pesach1, Pesach7
+    JewishDate.NISSAN: [15, 21], // Pesach1, Pesach7
   };
 
   for (var delta = 1; delta <= 7; delta++) {
@@ -545,7 +549,8 @@ final minchaProvider = FutureProvider<List<AssembledSegment>>((ref) {
     final day = cal.getJewishDayOfMonth();
     final blocked = blockedMonths[m];
     if (blocked != null && blocked.contains(day)) {
-      if (delta == 7) return (onWeekday: false, onShabbat: true); // next Shabbat
+      if (delta == 7)
+        return (onWeekday: false, onShabbat: true); // next Shabbat
       return (onWeekday: true, onShabbat: false); // weekday
     }
   }
@@ -585,10 +590,16 @@ final birkatHamazonProvider =
 
   final extra = <String>[];
 
+  // Pre-bentching psalm: on days with no tachanun (festive days, Rosh Chodesh,
+  // etc.) and on Shabbat, only שיר המעלות is said — shown inline (no accordion).
+  // On ordinary weekdays both psalms are offered as collapsible accordions.
+  if (flags.contains(DayFlag.skipTachanun) || flags.contains(DayFlag.shabbat)) {
+    extra.add(DayFlag.birkatFestivePsalm);
+  }
+
   // Only the meal type is user-selectable now (שבע ברכות / ברית מילה). The
   // zimmun and dining-status variants are presented as full text with rubric
-  // instructions / parentheses, so no zimmun/dining flags are injected. The two
-  // pre-bentching psalms render as collapsible accordions (no auto-selection).
+  // instructions / parentheses, so no zimmun/dining flags are injected.
   switch (mealType) {
     case MealType.regular:
     case MealType.seudatMitzvah:

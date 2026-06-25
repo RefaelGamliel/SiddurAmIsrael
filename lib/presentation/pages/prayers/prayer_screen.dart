@@ -40,7 +40,8 @@ const _subGroupDefaultOpen = <String>{};
 // prayer — this list only determines which ones are included and their labels.
 
 class _NavSpec {
-  const _NavSpec(this.segmentId, this.label, {this.occurrence = 0, this.group = ''});
+  const _NavSpec(this.segmentId, this.label,
+      {this.occurrence = 0, this.group = ''});
   final String segmentId;
   final String label;
   final int occurrence; // 0 = first occurrence, 1 = second, …
@@ -52,48 +53,48 @@ class _NavSpec {
 
 const _navSpecs = <_NavSpec>[
   // ── Lifnei HaTfila ──────────────────────────────────────────────────────
-  _NavSpec('modeh_ani',             'השכמת הבוקר'),
-  _NavSpec('birkat_tzitzit_gadol',  'סדר לבישת ציצית'),
-  _NavSpec('seder_tefillin',        'סדר הנחת תפילין'),
+  _NavSpec('modeh_ani', 'השכמת הבוקר'),
+  _NavSpec('birkat_tzitzit_gadol', 'סדר לבישת ציצית'),
+  _NavSpec('seder_tefillin', 'סדר הנחת תפילין'),
   _NavSpec('birkot_hashachar_header', 'ברכות השחר'),
-  _NavSpec('akeidah',               'פרשת העקידה'),
-  _NavSpec('korbanot_eizehu_header','איזהו מקומן'),
-  _NavSpec('korbanot_conclusion',   'רבי ישמעאל'),
+  _NavSpec('akeidah', 'פרשת העקידה'),
+  _NavSpec('korbanot_eizehu_header', 'איזהו מקומן'),
+  _NavSpec('korbanot_conclusion', 'רבי ישמעאל'),
   _NavSpec('kaddish_derabanan_header', 'קדיש דרבנן'),
   // ── Pesukei DeZimra ─────────────────────────────────────────────────────
   // Ashkenaz starts with psalm_030; Sfard/EM starts with hodu.
   // group:'pezimra_start' ensures only the first one found fires.
-  _NavSpec('psalm_030',             'פסוקי דזמרה', group: 'pezimra_start'),
-  _NavSpec('hodu',                  'פסוקי דזמרה', group: 'pezimra_start'),
-  _NavSpec('baruch_sheamar',        'ברוך שאמר'),
-  _NavSpec('ashrei',                'אשרי יושבי ביתך'),   // 1st = pesukei dezimra
-  _NavSpec('yishtabach',            'ישתבח'),
+  _NavSpec('psalm_030', 'פסוקי דזמרה', group: 'pezimra_start'),
+  _NavSpec('hodu', 'פסוקי דזמרה', group: 'pezimra_start'),
+  _NavSpec('baruch_sheamar', 'ברוך שאמר'),
+  _NavSpec('ashrei', 'אשרי יושבי ביתך'), // 1st = pesukei dezimra
+  _NavSpec('yishtabach', 'ישתבח'),
   // ── Birkot Kriat Shema ──────────────────────────────────────────────────
-  _NavSpec('yotzer_or',             'יוצר אור'),
-  _NavSpec('shema',                 'קריאת שמע'),
+  _NavSpec('yotzer_or', 'יוצר אור'),
+  _NavSpec('shema', 'קריאת שמע'),
   // ── Amidah (one entry for entire amidah) ────────────────────────────────
-  _NavSpec('amidah_intro',          'עמידה'),
+  _NavSpec('amidah_intro', 'עמידה'),
   // ── Chazarat HaShatz (inside accordion) ─────────────────────────────────
-  _NavSpec('kedushah',              'קדושה'),
-  _NavSpec('modim_derabanan',       'מודים דרבנן'),
-  _NavSpec('birkat_kohanim',        'ברכת כהנים'),
+  _NavSpec('kedushah', 'קדושה'),
+  _NavSpec('modim_derabanan', 'מודים דרבנן'),
+  _NavSpec('birkat_kohanim', 'ברכת כהנים'),
   // ── Post-amidah ─────────────────────────────────────────────────────────
-  _NavSpec('tachanun_header',       'תחנון'),
+  _NavSpec('tachanun_header', 'תחנון'),
   _NavSpec('kriat_hatorah_hotzaah', 'קריאת התורה'),
-  _NavSpec('ashrei',                'אשרי',    occurrence: 1), // 2nd = after musaf
+  _NavSpec('ashrei', 'אשרי', occurrence: 1), // 2nd = after musaf
   // שיר של יום — exactly one day-variant fires per service.
-  _NavSpec('shir_shel_yom_sunday',    'שיר של יום'),
-  _NavSpec('shir_shel_yom_monday',    'שיר של יום'),
-  _NavSpec('shir_shel_yom_tuesday',   'שיר של יום'),
+  _NavSpec('shir_shel_yom_sunday', 'שיר של יום'),
+  _NavSpec('shir_shel_yom_monday', 'שיר של יום'),
+  _NavSpec('shir_shel_yom_tuesday', 'שיר של יום'),
   _NavSpec('shir_shel_yom_wednesday', 'שיר של יום'),
-  _NavSpec('shir_shel_yom_thursday',  'שיר של יום'),
-  _NavSpec('shir_shel_yom_friday',    'שיר של יום'),
-  _NavSpec('shir_shel_yom_shabbat',   'שיר של יום'),
+  _NavSpec('shir_shel_yom_thursday', 'שיר של יום'),
+  _NavSpec('shir_shel_yom_friday', 'שיר של יום'),
+  _NavSpec('shir_shel_yom_shabbat', 'שיר של יום'),
   // ── Sof HaTfila ─────────────────────────────────────────────────────────
-  _NavSpec('musaf_header',          'מוסף'),
-  _NavSpec('ein_keloheinu',         'אין כאלקינו'),
-  _NavSpec('aleinu',                'עלינו לשבח'),
-  _NavSpec('ladavid',               'לדוד ה׳'),
+  _NavSpec('musaf_header', 'מוסף'),
+  _NavSpec('ein_keloheinu', 'אין כאלקינו'),
+  _NavSpec('aleinu', 'עלינו לשבח'),
+  _NavSpec('ladavid', 'לדוד ה׳'),
 ];
 
 /// Finds the matching nav spec for [id] at [occurrence], respecting group
@@ -157,8 +158,7 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
         if (_scrollController.hasClients &&
             _scrollController.position.hasContentDimensions) {
           _scrollController.jumpTo(
-            savedOffset.clamp(
-                0.0, _scrollController.position.maxScrollExtent),
+            savedOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
           );
         }
       });
@@ -186,100 +186,102 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
     final bannerSeen = ref.watch(hasSeenSettingsBannerProvider);
     return Scaffold(
       backgroundColor: AppColors.background,
+      // The AppShell paints the status-bar inset and strips the top padding,
+      // so this screen only needs to avoid the bottom inset.
       body: SafeArea(
         bottom: false,
         child: Stack(
-        children: [
-          Column(
-            children: [
-              SettingsReminderBanner(onOpenSettings: widget.onOpenSettings),
-              Expanded(
-                child: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    SliverAppBar(
-                      expandedHeight: 140,
-                      pinned: true,
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      title: Text(
-                        widget.title,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
+          children: [
+            Column(
+              children: [
+                SettingsReminderBanner(onOpenSettings: widget.onOpenSettings),
+                Expanded(
+                  child: CustomScrollView(
+                    controller: _scrollController,
+                    slivers: [
+                      SliverAppBar(
+                        expandedHeight: 140,
+                        pinned: true,
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        title: Text(
+                          widget.title,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        centerTitle: true,
+                        flexibleSpace: const FlexibleSpaceBar(
+                          background: HalachicHeader(),
+                          collapseMode: CollapseMode.pin,
                         ),
                       ),
-                      centerTitle: true,
-                      flexibleSpace: const FlexibleSpaceBar(
-                        background: HalachicHeader(),
-                        collapseMode: CollapseMode.pin,
-                      ),
-                    ),
-                    prayerAsync.when(
-                      // Inline toggles change a watched provider → the prayer
-                      // FutureProvider RELOADS (dependency change), not just
-                      // refreshes. skipLoadingOnReload keeps the previous
-                      // content visible so the SliverList is never replaced by
-                      // the loading spinner — which is what reset scroll to top.
-                      skipLoadingOnReload: true,
-                      skipLoadingOnRefresh: true,
-                      loading: () => const SliverFillRemaining(
-                        child: Center(
-                          child: CircularProgressIndicator(
-                              color: AppColors.primary),
+                      prayerAsync.when(
+                        // Inline toggles change a watched provider → the prayer
+                        // FutureProvider RELOADS (dependency change), not just
+                        // refreshes. skipLoadingOnReload keeps the previous
+                        // content visible so the SliverList is never replaced by
+                        // the loading spinner — which is what reset scroll to top.
+                        skipLoadingOnReload: true,
+                        skipLoadingOnRefresh: true,
+                        loading: () => const SliverFillRemaining(
+                          child: Center(
+                            child: CircularProgressIndicator(
+                                color: AppColors.primary),
+                          ),
                         ),
-                      ),
-                      error: (err, _) => SliverFillRemaining(
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(24),
-                            child: Text(
-                              'שגיאה בטעינת התפילה\n$err',
-                              textAlign: TextAlign.center,
-                              textDirection: TextDirection.rtl,
-                              style: const TextStyle(color: Colors.red),
+                        error: (err, _) => SliverFillRemaining(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(
+                                'שגיאה בטעינת התפילה\n$err',
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.rtl,
+                                style: const TextStyle(color: Colors.red),
+                              ),
                             ),
                           ),
                         ),
+                        data: (segments) {
+                          _updateCache(segments);
+                          final items = _cachedItems!;
+                          // Truly eager: a Column inside SliverToBoxAdapter keeps
+                          // EVERY child (and its nav GlobalKey) in the element
+                          // tree at all times — unlike SliverList, which is lazy
+                          // and only builds children near the viewport. This is
+                          // required so Scrollable.ensureVisible can always reach
+                          // any nav target accurately, regardless of distance.
+                          return SliverToBoxAdapter(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                for (final item in items) item.build(context),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-                      data: (segments) {
-                        _updateCache(segments);
-                        final items = _cachedItems!;
-                        // Truly eager: a Column inside SliverToBoxAdapter keeps
-                        // EVERY child (and its nav GlobalKey) in the element
-                        // tree at all times — unlike SliverList, which is lazy
-                        // and only builds children near the viewport. This is
-                        // required so Scrollable.ensureVisible can always reach
-                        // any nav target accurately, regardless of distance.
-                        return SliverToBoxAdapter(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              for (final item in items) item.build(context),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          FontSizeFab(scrollController: _scrollController),
-          if (prayerAsync.hasValue &&
-              (_cachedNavEntries?.isNotEmpty ?? false))
-            Positioned(
-              // Below the collapsed toolbar + clear of the title text.
-              // Add extra offset when the settings banner is still visible
-              // (~44 dp) so the button doesn't land on the banner row.
-              top: bannerSeen ? kToolbarHeight + 4 : kToolbarHeight + 48,
-              right: 12,
-              child: _NavFab(onTap: _showNavSheet),
+              ],
             ),
-        ],
-      ),
+            FontSizeFab(scrollController: _scrollController),
+            if (prayerAsync.hasValue &&
+                (_cachedNavEntries?.isNotEmpty ?? false))
+              Positioned(
+                // Below the collapsed toolbar + clear of the title text.
+                // Add extra offset when the settings banner is still visible
+                // (~44 dp) so the button doesn't land on the banner row.
+                top: bannerSeen ? kToolbarHeight + 4 : kToolbarHeight + 48,
+                right: 12,
+                child: _NavFab(onTap: _showNavSheet),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -409,8 +411,8 @@ class _GroupItem extends _ListItem {
     required Map<String, int> counts,
     required Set<String> satisfiedGroups,
     required this.itemIndex,
-  }) : _key = GlobalKey(),
-       _controller = ExpansibleController() {
+  })  : _key = GlobalKey(),
+        _controller = ExpansibleController() {
     // Scan children for nav anchors; update the shared occurrence counter.
     final childKeys = <int, GlobalKey>{};
     final entries = <_NavEntry>[];
@@ -523,7 +525,8 @@ class _GroupAccordionState extends ConsumerState<_GroupAccordion> {
             collapsedShape: const Border(),
             onExpansionChanged: (v) {
               setState(() => _expanded = v);
-              final saved = ref.read(expandedSegmentsProvider).contains(_persistKey);
+              final saved =
+                  ref.read(expandedSegmentsProvider).contains(_persistKey);
               if (v != saved) {
                 ref.read(expandedSegmentsProvider.notifier).toggle(_persistKey);
               }
@@ -663,8 +666,7 @@ class _SubGroupAccordionState extends ConsumerState<_SubGroupAccordion> {
             ),
           ),
           children: [
-            for (final seg in widget.segments)
-              PrayerTextWidget(segment: seg),
+            for (final seg in widget.segments) PrayerTextWidget(segment: seg),
           ],
         ),
       ),
@@ -720,9 +722,11 @@ class _NavEntry {
 
   final String label;
   final GlobalKey key;
+
   /// Called before scrolling (e.g., to expand an accordion). The nav sheet
   /// waits 350 ms after the call to allow the animation to complete.
   final VoidCallback? onBeforeScroll;
+
   /// Position of this item in the full assembled list — used for fallback
   /// scroll estimation when the widget is off-screen.
   final int itemIndex;

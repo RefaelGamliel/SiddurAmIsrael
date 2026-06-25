@@ -102,6 +102,7 @@ const _segmentLabels = <String, String>{
   'tefila_ledavid_ps86': 'תפילה לדוד',
   'petihat_eliyahu': 'פתיחת אליהו',
   'korbanot_mincha': 'קרבנות',
+  'tikon_tefilati': '',
   // ── Shacharit structure ────────────────────────────────────────────────────
   'barchu': 'ברכו',
   'shema': 'קריאת שמע',

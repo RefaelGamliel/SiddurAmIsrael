@@ -76,7 +76,26 @@ class _AppShellState extends ConsumerState<AppShell> {
     ];
 
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: screens),
+      body: Column(
+        children: [
+          // Paint the status-bar inset with the header colour so the system
+          // battery/clock icons stay visible on every tab (otherwise they
+          // vanish against the light page background). Stripping the top
+          // padding afterwards lets each tab's own AppBar sit flush below the
+          // inset instead of adding a second gap.
+          Container(
+            color: AppColors.primary,
+            height: MediaQuery.of(context).padding.top,
+          ),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: IndexedStack(index: _currentIndex, children: screens),
+            ),
+          ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: _onTapTab,
@@ -130,22 +149,28 @@ class _PrayersTab extends ConsumerWidget {
       PrayerService.maariv => 'maariv',
     };
 
-    return Navigator(
-      key: navKey,
-      onGenerateInitialRoutes: (navigator, initialRoute) => [
-        MaterialPageRoute<void>(
+    // Force RTL so push/pop slide transitions match the (always-RTL) prayer
+    // content — otherwise an LTR interface language makes pages slide in from
+    // the wrong side during navigation.
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Navigator(
+        key: navKey,
+        onGenerateInitialRoutes: (navigator, initialRoute) => [
+          MaterialPageRoute<void>(
+            builder: (_) => PrayerMenuScreen(onOpenSettings: onOpenSettings),
+          ),
+          MaterialPageRoute<void>(
+            builder: (_) => buildPrayerReader(
+              current,
+              s.t(currentTitleKey),
+              onOpenSettings: onOpenSettings,
+            ),
+          ),
+        ],
+        onGenerateRoute: (settings) => MaterialPageRoute<void>(
           builder: (_) => PrayerMenuScreen(onOpenSettings: onOpenSettings),
         ),
-        MaterialPageRoute<void>(
-          builder: (_) => buildPrayerReader(
-            current,
-            s.t(currentTitleKey),
-            onOpenSettings: onOpenSettings,
-          ),
-        ),
-      ],
-      onGenerateRoute: (settings) => MaterialPageRoute<void>(
-        builder: (_) => PrayerMenuScreen(onOpenSettings: onOpenSettings),
       ),
     );
   }
@@ -161,10 +186,13 @@ class _BerachotTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      key: navKey,
-      onGenerateRoute: (settings) => MaterialPageRoute<void>(
-        builder: (_) => const BerachotScreen(),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Navigator(
+        key: navKey,
+        onGenerateRoute: (settings) => MaterialPageRoute<void>(
+          builder: (_) => const BerachotScreen(),
+        ),
       ),
     );
   }

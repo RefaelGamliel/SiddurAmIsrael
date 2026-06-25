@@ -9,14 +9,26 @@
     },
     {
       "segment_id": "bhm_shir_hamaalot",
-      "condition_flags": [],
+      "condition_flags": [
+        "birkat_festive_psalm"
+      ],
       "exclude_flags": [],
+      "optional": false
+    },
+    {
+      "segment_id": "bhm_shir_hamaalot",
+      "condition_flags": [],
+      "exclude_flags": [
+        "birkat_festive_psalm"
+      ],
       "optional": true
     },
     {
       "segment_id": "bhm_naharot",
       "condition_flags": [],
-      "exclude_flags": [],
+      "exclude_flags": [
+        "birkat_festive_psalm"
+      ],
       "optional": true
     },
     {

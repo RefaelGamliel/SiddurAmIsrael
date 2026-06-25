@@ -71,7 +71,6 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nusach = ref.watch(nusachProvider);
     final gender = ref.watch(userGenderProvider);
-    final inIsrael = ref.watch(isInIsraelProvider);
     final withMinyan = ref.watch(withMinyanProvider);
     final purimDate = ref.watch(purimDateProvider);
     final fontFactor = ref.watch(fontSizeFactorProvider);
@@ -108,9 +107,8 @@ class SettingsScreen extends ConsumerWidget {
               value: 'edot_mizrach',
               groupValue: nusach,
               title: Text(s.t('nusach_edot_mizrach')),
-              onChanged: (v) => ref
-                  .read(nusachProvider.notifier)
-                  .set(v ?? 'edot_mizrach'),
+              onChanged: (v) =>
+                  ref.read(nusachProvider.notifier).set(v ?? 'edot_mizrach'),
             ),
             RadioListTile<String>(
               value: 'sfard',
@@ -126,7 +124,6 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (v) =>
                   ref.read(nusachProvider.notifier).set(v ?? 'ashkenaz'),
             ),
-
             _SectionHeader(title: s.t('section_davener')),
             SwitchListTile(
               title: Text(s.t('i_am_woman')),
@@ -136,15 +133,6 @@ class SettingsScreen extends ConsumerWidget {
                   .read(userGenderProvider.notifier)
                   .set(isFemale ? Gender.female : Gender.male),
             ),
-
-            _SectionHeader(title: s.t('section_location')),
-            SwitchListTile(
-              title: Text(s.t('in_israel')),
-              value: inIsrael,
-              onChanged: (v) =>
-                  ref.read(isInIsraelProvider.notifier).set(v),
-            ),
-
             _SectionHeader(title: s.t('section_zmanim_location')),
             SwitchListTile(
               title: Text(s.t('use_gps')),
@@ -162,19 +150,16 @@ class SettingsScreen extends ConsumerWidget {
                     color: AppColors.primary),
                 title: Text(s.t('city_for_times')),
                 subtitle: Text(city.name),
-                trailing: const Icon(Icons.chevron_left,
-                    color: AppColors.primary),
+                trailing:
+                    const Icon(Icons.chevron_left, color: AppColors.primary),
                 onTap: () => _pickCity(context, ref, city.id),
               ),
-
             _SectionHeader(title: s.t('section_prayer')),
             SwitchListTile(
               title: Text(s.t('with_minyan')),
               value: withMinyan,
-              onChanged: (v) =>
-                  ref.read(withMinyanProvider.notifier).set(v),
+              onChanged: (v) => ref.read(withMinyanProvider.notifier).set(v),
             ),
-
             _SectionHeader(title: s.t('section_purim')),
             RadioListTile<PurimDate>(
               value: PurimDate.fourteenth,
@@ -196,11 +181,9 @@ class SettingsScreen extends ConsumerWidget {
               value: PurimDate.both,
               groupValue: purimDate,
               title: Text(s.t('purim_both')),
-              onChanged: (v) => ref
-                  .read(purimDateProvider.notifier)
-                  .set(v ?? PurimDate.both),
+              onChanged: (v) =>
+                  ref.read(purimDateProvider.notifier).set(v ?? PurimDate.both),
             ),
-
             _SectionHeader(title: s.t('section_display')),
             SwitchListTile(
               title: Text(s.t('show_labels')),
@@ -208,7 +191,6 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (v) =>
                   ref.read(showSegmentLabelsProvider.notifier).set(v),
             ),
-
             _SectionHeader(title: s.t('section_font')),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -223,9 +205,8 @@ class SettingsScreen extends ConsumerWidget {
                       divisions: AppDimens.fontFactorDivisions,
                       label: '${(fontFactor * 100).round()}%',
                       activeColor: AppColors.primary,
-                      onChanged: (v) => ref
-                          .read(fontSizeFactorProvider.notifier)
-                          .set(v),
+                      onChanged: (v) =>
+                          ref.read(fontSizeFactorProvider.notifier).set(v),
                     ),
                   ),
                   const Text('א', style: TextStyle(fontSize: 22)),
@@ -233,8 +214,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -251,7 +231,6 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-
             _SectionHeader(title: s.t('section_language')),
             for (final l in AppLanguage.values)
               RadioListTile<String>(
@@ -262,7 +241,6 @@ class SettingsScreen extends ConsumerWidget {
                     .read(appLanguageProvider.notifier)
                     .set(v ?? AppLanguage.hebrew.code),
               ),
-
             const SizedBox(height: 8),
             _SectionHeader(title: s.t('section_contact')),
             Padding(
@@ -310,8 +288,11 @@ class _DevDateTimePanel extends ConsumerWidget {
       );
       if (picked == null) return;
       ref.read(devDateTimeOverrideProvider.notifier).state = DateTime(
-        picked.year, picked.month, picked.day,
-        displayDt.hour, displayDt.minute,
+        picked.year,
+        picked.month,
+        picked.day,
+        displayDt.hour,
+        displayDt.minute,
       );
     }
 
@@ -322,8 +303,11 @@ class _DevDateTimePanel extends ConsumerWidget {
       );
       if (picked == null) return;
       ref.read(devDateTimeOverrideProvider.notifier).state = DateTime(
-        displayDt.year, displayDt.month, displayDt.day,
-        picked.hour, picked.minute,
+        displayDt.year,
+        displayDt.month,
+        displayDt.day,
+        picked.hour,
+        picked.minute,
       );
     }
 
@@ -361,9 +345,7 @@ class _DevDateTimePanel extends ConsumerWidget {
             override == null ? 'זמן אמיתי (ללא דריסה)' : 'דריסה פעילה',
             style: TextStyle(
               fontSize: 12,
-              color: override == null
-                  ? Colors.grey
-                  : AppColors.primary,
+              color: override == null ? Colors.grey : AppColors.primary,
             ),
           ),
         ),
@@ -388,8 +370,9 @@ class _DevDateTimePanel extends ConsumerWidget {
                 OutlinedButton.icon(
                   icon: const Icon(Icons.restore, size: 16),
                   label: const Text('איפוס'),
-                  onPressed: () =>
-                      ref.read(devDateTimeOverrideProvider.notifier).state = null,
+                  onPressed: () => ref
+                      .read(devDateTimeOverrideProvider.notifier)
+                      .state = null,
                 ),
             ],
           ),

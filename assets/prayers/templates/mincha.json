@@ -44,6 +44,15 @@
       "allowed_nusach": []
     },
     {
+      "segment_id": "tikon_tefilati",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": [
+        "edot_mizrach"
+      ]
+    },
+    {
       "sub_template_id": "chatzi_kaddish",
       "condition_flags": [
         "with_minyan"

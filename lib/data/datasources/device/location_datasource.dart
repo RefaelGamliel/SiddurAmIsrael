@@ -36,6 +36,15 @@ class LocationDatasource {
 
   /// Builds a [City] from raw coordinates. Candle-lighting is 40 minutes only
   /// near Jerusalem, 20 elsewhere (per the project Halachic decision).
+  ///
+  /// [inIsrael] (which drives Yom Tov Sheni and similar din) is decided by a
+  /// coarse bounding box. It covers ALL of Eretz Yisrael — including Judea &
+  /// Samaria — with no false negatives. The trade-off is that a rectangle also
+  /// catches slivers of neighbouring countries inside it (e.g. Amman & the
+  /// western Jordan Valley, southern Lebanon around Tyre, north-east Sinai), so
+  /// a user physically in one of those border areas is treated as in Israel.
+  /// Choosing a fixed city instead is always exact. A precise border polygon is
+  /// a future refinement — see README "Known Limitations".
   City _cityFrom(double lat, double lng, double elevation) {
     final inIsrael =
         lat >= 29.4 && lat <= 33.4 && lng >= 34.2 && lng <= 35.95;
