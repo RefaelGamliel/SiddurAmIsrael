@@ -20,6 +20,7 @@ import 'package:siddur_am_israel_chai/data/repositories/sukkot_korbanot_reposito
 import 'package:siddur_am_israel_chai/domain/entities/assembled_segment.dart';
 import 'package:siddur_am_israel_chai/domain/entities/day_flags.dart';
 import 'package:siddur_am_israel_chai/domain/entities/omer_day.dart';
+import 'package:siddur_am_israel_chai/domain/entities/prayer_zmanim.dart';
 import 'package:siddur_am_israel_chai/domain/entities/user_context.dart';
 import 'package:siddur_am_israel_chai/domain/repositories/i_gra_ssy_repository.dart';
 import 'package:siddur_am_israel_chai/domain/repositories/i_kriah_repository.dart';
@@ -31,6 +32,7 @@ import 'package:siddur_am_israel_chai/domain/services/halachic_calendar_service.
 import 'package:siddur_am_israel_chai/domain/services/i_calendar_flag_provider.dart';
 import 'package:siddur_am_israel_chai/domain/services/i_prayer_assembler.dart';
 import 'package:siddur_am_israel_chai/domain/services/prayer_assembler.dart';
+import 'package:siddur_am_israel_chai/domain/services/prayer_zmanim_service.dart';
 import 'package:siddur_am_israel_chai/domain/services/service_time_resolver.dart';
 import 'package:siddur_am_israel_chai/presentation/providers/calendar_providers.dart';
 
@@ -130,6 +132,35 @@ final kriahDatasourceProvider = Provider<KriahDatasource>(
 final kriahRepositoryProvider = Provider<IKriahRepository>(
   (ref) => KriahRepositoryImpl(ref.watch(kriahDatasourceProvider)),
 );
+
+// ── Prayer-time zmanim (notes shown inside the siddur) ───────────────────────
+
+final prayerZmanimServiceProvider =
+    Provider<PrayerZmanimService>((ref) => const PrayerZmanimService());
+
+/// The effective "now" (honours the dev override in debug builds).
+final effectiveNowProvider = Provider<DateTime>((ref) => _effectiveNow(ref));
+
+/// Zmanim for the morning service — computed for the current civil date at the
+/// effective (GPS or selected) city. Used for the Sof-zman-Shema / Tefila notes.
+final shacharitZmanimProvider = Provider<PrayerZmanim>((ref) {
+  return ref.watch(prayerZmanimServiceProvider).compute(
+        city: ref.watch(effectiveCityProvider),
+        date: ref.watch(effectiveNowProvider),
+      );
+});
+
+/// Zmanim for the Maariv night (sunset / tzeit / chatzot). Between midnight and
+/// ~dawn the night still belongs to the previous civil day's sunset, so the
+/// date is shifted back one day in the small hours.
+final maarivZmanimProvider = Provider<PrayerZmanim>((ref) {
+  final now = ref.watch(effectiveNowProvider);
+  final date = now.hour < 6 ? now.subtract(const Duration(days: 1)) : now;
+  return ref.watch(prayerZmanimServiceProvider).compute(
+        city: ref.watch(effectiveCityProvider),
+        date: date,
+      );
+});
 
 final prayerAssemblerProvider = Provider<IPrayerAssembler>(
   (ref) => PrayerAssembler(

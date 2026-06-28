@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:siddur_am_israel_chai/domain/entities/assembled_segment.dart';
+import 'package:siddur_am_israel_chai/domain/services/service_time_resolver.dart';
 import 'package:siddur_am_israel_chai/presentation/i18n/app_strings.dart';
 import 'package:siddur_am_israel_chai/presentation/pages/compass/compass_screen.dart';
 import 'package:siddur_am_israel_chai/presentation/providers/prayer_providers.dart';
@@ -118,11 +119,13 @@ class PrayerScreen extends ConsumerStatefulWidget {
   const PrayerScreen({
     super.key,
     required this.title,
+    required this.service,
     required this.contentProvider,
     this.onOpenSettings,
   });
 
   final String title;
+  final PrayerService service;
   final FutureProvider<List<AssembledSegment>> contentProvider;
   final VoidCallback? onOpenSettings;
 
@@ -151,7 +154,7 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
         ? _scrollController.offset
         : 0.0;
     _lastSegments = segments;
-    _cachedItems = _buildListItems(segments);
+    _cachedItems = _buildListItems(segments, widget.service);
     _cachedNavEntries = _buildNavEntries(_cachedItems!);
     // Restore scroll position after layout so inline toggles don't jump.
     if (savedOffset > 0) {
@@ -309,10 +312,19 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
 ///
 /// [occurrenceCounts] is shared across all items so grouped children count
 /// toward the global occurrence index.
-List<_ListItem> _buildListItems(List<AssembledSegment> segments) {
+List<_ListItem> _buildListItems(
+    List<AssembledSegment> segments, PrayerService service) {
   final items = <_ListItem>[];
   final counts = <String, int>{};
   final satisfiedGroups = <String>{};
+
+  // Maariv: the tzeit / chatzot note sits at the very top, before the service.
+  if (service == PrayerService.maariv) {
+    items.add(const _ZmanNoteItem(_ZmanNoteKind.maariv));
+  }
+  // Shacharit: insert the Sof-zman notes right before their anchor segments.
+  var shemaNoteDone = false;
+  var tefilaNoteDone = false;
 
   int i = 0;
   while (i < segments.length) {
@@ -337,6 +349,15 @@ List<_ListItem> _buildListItems(List<AssembledSegment> segments) {
         // totalItems placeholder — filled after full list is built
       ));
     } else {
+      if (service == PrayerService.shacharit) {
+        if (!shemaNoteDone && seg.id == 'shema') {
+          items.add(const _ZmanNoteItem(_ZmanNoteKind.shema));
+          shemaNoteDone = true;
+        } else if (!tefilaNoteDone && seg.id == 'amidah_intro') {
+          items.add(const _ZmanNoteItem(_ZmanNoteKind.tefila));
+          tefilaNoteDone = true;
+        }
+      }
       final occ = counts[seg.id] ?? 0;
       counts[seg.id] = occ + 1;
       final spec = _findNavSpec(seg.id, occ, satisfiedGroups);
@@ -413,6 +434,106 @@ class _SegmentItem extends _ListItem {
   @override
   Widget build(BuildContext context) =>
       PrayerTextWidget(key: navKey, segment: segment);
+}
+
+// ── Prayer-time note item ─────────────────────────────────────────────────────
+
+enum _ZmanNoteKind { shema, tefila, maariv }
+
+class _ZmanNoteItem extends _ListItem {
+  const _ZmanNoteItem(this.kind);
+  final _ZmanNoteKind kind;
+
+  @override
+  Widget build(BuildContext context) => _ZmanNote(kind: kind);
+}
+
+/// A small, location-aware time note shown above a prayer section. Appears only
+/// inside its display window (Shacharit: from 1h before the זמן; Maariv tzeit:
+/// from 30 min before sunset; Maariv chatzot: from 1h before chatzot).
+class _ZmanNote extends ConsumerWidget {
+  const _ZmanNote({required this.kind});
+  final _ZmanNoteKind kind;
+
+  static String _hm(DateTime t) => '${t.hour.toString().padLeft(2, '0')}:'
+      '${t.minute.toString().padLeft(2, '0')}';
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(effectiveNowProvider);
+    final lines = <_ZmanLine>[];
+
+    switch (kind) {
+      case _ZmanNoteKind.shema:
+        final z = ref.watch(shacharitZmanimProvider).sofZmanShmaGra;
+        if (z != null && !now.isBefore(z.subtract(const Duration(hours: 1)))) {
+          lines.add(_ZmanLine('סוף זמן קריאת שמע בשעה ${_hm(z)}', 'לפי הגר״א'));
+        }
+      case _ZmanNoteKind.tefila:
+        final z = ref.watch(shacharitZmanimProvider).sofZmanTfilaGra;
+        if (z != null && !now.isBefore(z.subtract(const Duration(hours: 1)))) {
+          lines.add(_ZmanLine('סוף זמן תפילה בשעה ${_hm(z)}', 'לפי הגר״א'));
+        }
+      case _ZmanNoteKind.maariv:
+        final zm = ref.watch(maarivZmanimProvider);
+        final sunset = zm.sunset;
+        final tzeit = zm.tzeit;
+        final chatzot = zm.chatzotNight;
+        if (sunset != null &&
+            tzeit != null &&
+            !now.isBefore(sunset.subtract(const Duration(minutes: 30)))) {
+          lines.add(_ZmanLine(
+              'צאת הכוכבים בשעה ${_hm(tzeit)}', '18 דק׳ אחרי השקיעה'));
+        }
+        if (chatzot != null &&
+            !now.isBefore(chatzot.subtract(const Duration(hours: 1)))) {
+          lines.add(_ZmanLine('חצות הלילה בשעה ${_hm(chatzot)}', null));
+        }
+    }
+
+    if (lines.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [for (final l in lines) l.build()],
+      ),
+    );
+  }
+}
+
+class _ZmanLine {
+  const _ZmanLine(this.main, this.qualifier);
+  final String main;
+  final String? qualifier;
+
+  Widget build() => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 1),
+        child: Text.rich(
+          TextSpan(
+            children: [
+              TextSpan(
+                text: main,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primaryDark,
+                ),
+              ),
+              if (qualifier != null)
+                TextSpan(
+                  text: '  ($qualifier)',
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+            ],
+          ),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.rtl,
+        ),
+      );
 }
 
 // ── Group item (accordion) ────────────────────────────────────────────────────
