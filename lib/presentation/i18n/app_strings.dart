@@ -312,10 +312,10 @@ const Map<String, Map<String, String>> _table = {
     'fr': 'Vous êtes face au mont du Temple',
   },
   'compass_instruction': {
-    'he': 'סובב את המכשיר עד שהחץ פונה כלפי מעלה',
-    'en': 'Turn the device until the arrow points up',
-    'ru': 'Поворачивайте устройство, пока стрелка не укажет вверх',
-    'fr': "Tournez l'appareil jusqu'à ce que la flèche pointe vers le haut",
+    'he': 'החזק את המכשיר במאוזן וסובב עד שהחץ פונה כלפי מעלה',
+    'en': 'Hold the device flat and turn until the arrow points up',
+    'ru': 'Держите устройство горизонтально и поворачивайте, пока стрелка не укажет вверх',
+    'fr': "Tenez l'appareil à plat et tournez jusqu'à ce que la flèche pointe vers le haut",
   },
   'compass_no_sensor': {
     'he': 'אין חיישן מצפן במכשיר זה',
@@ -323,11 +323,17 @@ const Map<String, Map<String, String>> _table = {
     'ru': 'На этом устройстве нет датчика компаса',
     'fr': "Cet appareil n'a pas de boussole",
   },
-  'compass_location_note': {
-    'he': 'הכיוון מבוסס על המיקום שהוגדר בהגדרות',
-    'en': 'Direction is based on the location set in Settings',
-    'ru': 'Направление основано на местоположении из настроек',
-    'fr': 'La direction est basée sur le lieu défini dans les réglages',
+  'compass_note_gps': {
+    'he': 'הכיוון מחושב לפי מיקומך הנוכחי',
+    'en': 'Direction based on your current location',
+    'ru': 'Направление по вашему текущему местоположению',
+    'fr': 'Direction selon votre position actuelle',
+  },
+  'compass_note_city': {
+    'he': 'מיקום מדויק לא זמין · הכיוון לפי {city}',
+    'en': 'Precise location unavailable · direction for {city}',
+    'ru': 'Точное местоположение недоступно · направление для {city}',
+    'fr': 'Position précise indisponible · direction pour {city}',
   },
 };
 

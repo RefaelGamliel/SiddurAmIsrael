@@ -3,6 +3,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:siddur_am_israel_chai/core/utils/geo_bearing.dart';
+import 'package:siddur_am_israel_chai/domain/entities/city.dart';
 import 'package:siddur_am_israel_chai/presentation/i18n/app_strings.dart';
 import 'package:siddur_am_israel_chai/presentation/providers/compass_providers.dart';
 import 'package:siddur_am_israel_chai/presentation/theme/app_colors.dart';
@@ -17,8 +19,8 @@ class CompassScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = ref.watch(appStringsProvider);
+    final locationAsync = ref.watch(compassLocationProvider);
     final headingAsync = ref.watch(headingProvider);
-    final bearing = ref.watch(harHabayitBearingProvider);
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -30,14 +32,24 @@ class CompassScreen extends ConsumerWidget {
           foregroundColor: Colors.white,
           centerTitle: true,
         ),
-        body: headingAsync.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          ),
+        body: locationAsync.when(
+          loading: () => const _Spinner(),
           error: (_, __) => _NoSensor(s: s),
-          data: (heading) => heading == null
-              ? _NoSensor(s: s)
-              : _CompassView(heading: heading, bearing: bearing, s: s),
+          data: (city) {
+            final bearing = bearingToHarHabayit(city.latitude, city.longitude);
+            return headingAsync.when(
+              loading: () => const _Spinner(),
+              error: (_, __) => _NoSensor(s: s),
+              data: (heading) => heading == null
+                  ? _NoSensor(s: s)
+                  : _CompassView(
+                      heading: heading,
+                      bearing: bearing,
+                      city: city,
+                      s: s,
+                    ),
+            );
+          },
         ),
       ),
     );
@@ -48,11 +60,13 @@ class _CompassView extends StatelessWidget {
   const _CompassView({
     required this.heading,
     required this.bearing,
+    required this.city,
     required this.s,
   });
 
   final double heading;
   final double bearing;
+  final City city;
   final AppStrings s;
 
   @override
@@ -67,6 +81,10 @@ class _CompassView extends StatelessWidget {
     if (delta < -180) delta += 360;
     final facing = delta.abs() <= 5;
     final accent = facing ? Colors.green.shade600 : AppColors.primary;
+
+    final note = city.id == 'gps'
+        ? s.t('compass_note_gps')
+        : s.t('compass_note_city').replaceFirst('{city}', city.name);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +130,7 @@ class _CompassView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Text(
-            s.t('compass_location_note'),
+            note,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 12, color: Colors.grey),
           ),
@@ -120,6 +138,15 @@ class _CompassView extends StatelessWidget {
       ],
     );
   }
+}
+
+class _Spinner extends StatelessWidget {
+  const _Spinner();
+
+  @override
+  Widget build(BuildContext context) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      );
 }
 
 class _NoSensor extends StatelessWidget {

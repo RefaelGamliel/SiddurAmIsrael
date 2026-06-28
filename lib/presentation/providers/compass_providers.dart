@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:siddur_am_israel_chai/core/utils/geo_bearing.dart';
 import 'package:siddur_am_israel_chai/data/datasources/device/compass_datasource.dart';
+import 'package:siddur_am_israel_chai/domain/entities/city.dart';
 import 'package:siddur_am_israel_chai/presentation/providers/calendar_providers.dart';
 
 final compassDatasourceProvider =
@@ -17,9 +17,14 @@ final headingProvider = StreamProvider.autoDispose<double?>((ref) {
   return stream ?? Stream<double?>.value(null);
 });
 
-/// Bearing (degrees from true north) toward Har HaBayit from the effective
-/// location — GPS when enabled, otherwise the selected city.
-final harHabayitBearingProvider = Provider<double>((ref) {
-  final city = ref.watch(effectiveCityProvider);
-  return bearingToHarHabayit(city.latitude, city.longitude);
+/// Location used for the compass.
+///
+/// Unlike the zmanim location (which follows the user's city/GPS *setting*),
+/// direction depends on exactly where you are standing — so this ALWAYS tries
+/// the device's precise GPS position first, and only falls back to the selected
+/// city when GPS is unavailable or denied. The returned city has id `'gps'`
+/// when it came from the device, which the UI uses to label the source.
+final compassLocationProvider = FutureProvider.autoDispose<City>((ref) async {
+  final gps = await ref.watch(locationDatasourceProvider).currentCity();
+  return gps ?? ref.watch(selectedCityProvider);
 });
