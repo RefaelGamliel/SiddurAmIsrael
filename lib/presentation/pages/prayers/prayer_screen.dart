@@ -119,13 +119,17 @@ class PrayerScreen extends ConsumerStatefulWidget {
   const PrayerScreen({
     super.key,
     required this.title,
-    required this.service,
     required this.contentProvider,
+    this.service,
     this.onOpenSettings,
   });
 
   final String title;
-  final PrayerService service;
+
+  /// The daily service this screen shows, when applicable. Drives the
+  /// prayer-time notes (Sof zman Shema/Tefila, tzeit/chatzot). Null for the
+  /// Berachot screens, which get no time notes.
+  final PrayerService? service;
   final FutureProvider<List<AssembledSegment>> contentProvider;
   final VoidCallback? onOpenSettings;
 
@@ -313,7 +317,7 @@ class _PrayerScreenState extends ConsumerState<PrayerScreen> {
 /// [occurrenceCounts] is shared across all items so grouped children count
 /// toward the global occurrence index.
 List<_ListItem> _buildListItems(
-    List<AssembledSegment> segments, PrayerService service) {
+    List<AssembledSegment> segments, PrayerService? service) {
   final items = <_ListItem>[];
   final counts = <String, int>{};
   final satisfiedGroups = <String>{};
