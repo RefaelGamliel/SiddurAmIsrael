@@ -322,11 +322,9 @@ List<_ListItem> _buildListItems(
   final counts = <String, int>{};
   final satisfiedGroups = <String>{};
 
-  // Maariv: the tzeit / chatzot note sits at the very top, before the service.
-  if (service == PrayerService.maariv) {
-    items.add(const _ZmanNoteItem(_ZmanNoteKind.maariv));
-  }
-  // Shacharit: insert the Sof-zman notes right before their anchor segments.
+  // Time notes are inserted right before their anchor segments: Shacharit shows
+  // Sof-zman Shema/Tefila before Kriat Shema and the Amidah; Maariv shows the
+  // tzeit/chatzot note before its Kriat Shema.
   var shemaNoteDone = false;
   var tefilaNoteDone = false;
 
@@ -353,14 +351,19 @@ List<_ListItem> _buildListItems(
         // totalItems placeholder — filled after full list is built
       ));
     } else {
-      if (service == PrayerService.shacharit) {
-        if (!shemaNoteDone && seg.id == 'shema') {
+      if (!shemaNoteDone && seg.id == 'shema') {
+        if (service == PrayerService.shacharit) {
           items.add(const _ZmanNoteItem(_ZmanNoteKind.shema));
           shemaNoteDone = true;
-        } else if (!tefilaNoteDone && seg.id == 'amidah_intro') {
-          items.add(const _ZmanNoteItem(_ZmanNoteKind.tefila));
-          tefilaNoteDone = true;
+        } else if (service == PrayerService.maariv) {
+          items.add(const _ZmanNoteItem(_ZmanNoteKind.maariv));
+          shemaNoteDone = true;
         }
+      } else if (service == PrayerService.shacharit &&
+          !tefilaNoteDone &&
+          seg.id == 'amidah_intro') {
+        items.add(const _ZmanNoteItem(_ZmanNoteKind.tefila));
+        tefilaNoteDone = true;
       }
       final occ = counts[seg.id] ?? 0;
       counts[seg.id] = occ + 1;
@@ -452,9 +455,10 @@ class _ZmanNoteItem extends _ListItem {
   Widget build(BuildContext context) => _ZmanNote(kind: kind);
 }
 
-/// A small, location-aware time note shown above a prayer section. Appears only
-/// inside its display window (Shacharit: from 1h before the זמן; Maariv tzeit:
-/// from 30 min before sunset; Maariv chatzot: from 1h before chatzot).
+/// A small, location-aware time note shown just before Kriat Shema. Appears
+/// only inside its display window (Shacharit: from 1h before the זמן; Maariv
+/// tzeit: from 30 min before sunset; Maariv chatzot: from 2h before chatzot,
+/// replacing the tzeit line).
 class _ZmanNote extends ConsumerWidget {
   const _ZmanNote({required this.kind});
   final _ZmanNoteKind kind;
@@ -471,27 +475,28 @@ class _ZmanNote extends ConsumerWidget {
       case _ZmanNoteKind.shema:
         final z = ref.watch(shacharitZmanimProvider).sofZmanShmaGra;
         if (z != null && !now.isBefore(z.subtract(const Duration(hours: 1)))) {
-          lines.add(_ZmanLine('סוף זמן קריאת שמע בשעה ${_hm(z)}', 'לפי הגר״א'));
+          lines.add(_ZmanLine('סוף זמן קריאת שמע בשעה ${_hm(z)}', 'זמן הגר״א'));
         }
       case _ZmanNoteKind.tefila:
         final z = ref.watch(shacharitZmanimProvider).sofZmanTfilaGra;
         if (z != null && !now.isBefore(z.subtract(const Duration(hours: 1)))) {
-          lines.add(_ZmanLine('סוף זמן תפילה בשעה ${_hm(z)}', 'לפי הגר״א'));
+          lines.add(_ZmanLine('סוף זמן תפילה בשעה ${_hm(z)}', 'זמן הגר״א'));
         }
       case _ZmanNoteKind.maariv:
+        // Mutually exclusive: from 2h before chatzot show chatzot; otherwise
+        // from 30 min before sunset show tzeit.
         final zm = ref.watch(maarivZmanimProvider);
         final sunset = zm.sunset;
         final tzeit = zm.tzeit;
         final chatzot = zm.chatzotNight;
-        if (sunset != null &&
+        if (chatzot != null &&
+            !now.isBefore(chatzot.subtract(const Duration(hours: 2)))) {
+          lines.add(_ZmanLine('חצות הלילה בשעה ${_hm(chatzot)}', null));
+        } else if (sunset != null &&
             tzeit != null &&
             !now.isBefore(sunset.subtract(const Duration(minutes: 30)))) {
           lines.add(_ZmanLine(
               'צאת הכוכבים בשעה ${_hm(tzeit)}', '18 דק׳ אחרי השקיעה'));
-        }
-        if (chatzot != null &&
-            !now.isBefore(chatzot.subtract(const Duration(hours: 1)))) {
-          lines.add(_ZmanLine('חצות הלילה בשעה ${_hm(chatzot)}', null));
         }
     }
 
@@ -519,8 +524,8 @@ class _ZmanLine {
               TextSpan(
                 text: main,
                 style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w300,
                   color: AppColors.primaryDark,
                 ),
               ),
@@ -529,12 +534,13 @@ class _ZmanLine {
                   text: '  ($qualifier)',
                   style: TextStyle(
                     fontSize: 11,
+                    fontWeight: FontWeight.w300,
                     color: Colors.grey.shade600,
                   ),
                 ),
             ],
           ),
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.right,
           textDirection: TextDirection.rtl,
         ),
       );
