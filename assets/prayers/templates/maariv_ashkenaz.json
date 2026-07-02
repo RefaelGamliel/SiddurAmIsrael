@@ -92,7 +92,7 @@
       "allowed_nusach": []
     },
     {
-      "segment_id": "kaddish_titkabal",
+      "sub_template_id": "kaddish_titkabal",
       "condition_flags": [
         "purim",
         "motzaei_shabbat",

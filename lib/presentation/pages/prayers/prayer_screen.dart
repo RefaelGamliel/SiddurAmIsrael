@@ -22,6 +22,7 @@ const _groupTitles = <String, String>{
   'eizehu_group': 'איזהו מקומן',
   'tachanun': 'תחנון',
   'zimmun': 'זימון',
+  'selichot_bahab': 'סליחות בה״ב',
 };
 
 // Group accordions that open by default (the user can still collapse them).

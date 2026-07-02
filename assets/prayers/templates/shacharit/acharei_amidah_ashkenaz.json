@@ -34,7 +34,8 @@
       ],
       "exclude_flags": [
         "skip_tachanun"
-      ]
+      ],
+      "group_id": "selichot_bahab"
     },
     {
       "sub_template_id": "selichot_bahab_chamishi",
@@ -44,7 +45,8 @@
       ],
       "exclude_flags": [
         "skip_tachanun"
-      ]
+      ],
+      "group_id": "selichot_bahab"
     },
     {
       "sub_template_id": "selichot_bahab_sheni_batra",
@@ -54,7 +56,8 @@
       ],
       "exclude_flags": [
         "skip_tachanun"
-      ]
+      ],
+      "group_id": "selichot_bahab"
     },
     {
       "segment_id": "avinu_malkeinu",
