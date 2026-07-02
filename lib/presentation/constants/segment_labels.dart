@@ -284,6 +284,8 @@ const _segmentLabels = <String, String>{
   'el_melech_yoshev_em_montue': '',
   'yud_gimel_midot_em': '',
   // ── Selichot (fast days + BaHaB) ─────────────────────────────────────────
+  // Section header shown above the fast-day selichot (also a nav anchor).
+  'selichot_header': 'סליחות',
   // End-of-selichot block, rendered as a default-open accordion so it can be
   // collapsed when not said. Explicit label overrides the empty selichot_ fallback.
   'selichot_shared_7': 'אֵל רַחוּם שְׁמֶךָ',

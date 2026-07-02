@@ -3,6 +3,16 @@
   "name": "shacharit_acharei_amidah_ashkenaz",
   "segments": [
     {
+      "segment_id": "selichot_header",
+      "condition_flags": [
+        "fast_day",
+        "with_minyan"
+      ],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
       "sub_template_id": "selichot_10_tevet",
       "condition_flags": [
         "fast_10_tevet",

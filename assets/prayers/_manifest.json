@@ -371,7 +371,8 @@
     "selichot_shared_18": "assets/prayers/shacharit/acharei_amidah/common/selichot_shared_18.json",
     "selichot_shared_19": "assets/prayers/shacharit/acharei_amidah/common/selichot_shared_19.json",
     "selichot_shared_20": "assets/prayers/shacharit/acharei_amidah/common/selichot_shared_20.json",
-    "selichot_shared_21": "assets/prayers/shacharit/acharei_amidah/common/selichot_shared_21.json"
+    "selichot_shared_21": "assets/prayers/shacharit/acharei_amidah/common/selichot_shared_21.json",
+    "selichot_header": "assets/prayers/shacharit/acharei_amidah/common/selichot_header.json"
   },
   "nusach": {
     "ashkenaz": {

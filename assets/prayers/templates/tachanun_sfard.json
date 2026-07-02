@@ -13,7 +13,9 @@
       "condition_flags": [
         "with_minyan"
       ],
-      "exclude_flags": [],
+      "exclude_flags": [
+        "fast_day"
+      ],
       "optional": false,
       "allowed_nusach": [],
       "sub_template_id": "tachanun_vidui"

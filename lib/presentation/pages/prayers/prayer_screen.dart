@@ -82,7 +82,11 @@ const _navSpecs = <_NavSpec>[
   _NavSpec('modim_derabanan', 'מודים דרבנן'),
   _NavSpec('birkat_kohanim', 'ברכת כהנים'),
   // ── Post-amidah ─────────────────────────────────────────────────────────
+  _NavSpec('selichot_header', 'סליחות'),
   _NavSpec('tachanun_header', 'תחנון'),
+  // Hallel — full or half; only whichever is said fires (mutually exclusive).
+  _NavSpec('hallel', 'הלל', group: 'hallel'),
+  _NavSpec('hallel_half', 'הלל', group: 'hallel'),
   _NavSpec('kriat_hatorah_hotzaah', 'קריאת התורה'),
   _NavSpec('ashrei', 'אשרי', occurrence: 1), // 2nd = after musaf
   // שיר של יום — exactly one day-variant fires per service.
