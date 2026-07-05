@@ -3,6 +3,13 @@
   "name": "תחנון",
   "segments": [
     {
+      "segment_id": "tachanun_header",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
       "segment_id": "vidui_yud_gimel_midot",
       "condition_flags": [
         "with_minyan"
@@ -19,7 +26,7 @@
       "allowed_nusach": []
     },
     {
-      "segment_id": "tachanun_em_selichot_monday_thursday",
+      "sub_template_id": "tachanun_em_selichot_monday_thursday",
       "condition_flags": [
         "monday_thursday"
       ],

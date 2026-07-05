@@ -12,23 +12,13 @@ enum PurimDate { fourteenth, fifteenth, both }
 
 /// Type of meal for Birkat HaMazon. Transient (per-meal) — NOT persisted.
 /// regular        = everyday meal
-/// seudatMitzvah  = a generic mitzvah meal
+/// seudatMitzvah  = (retained for enum stability; no longer user-selectable)
 /// shevaBrachot   = wedding / sheva brachot meal (adds zimmun + kos blessings)
 /// britMilah      = circumcision meal (adds zimmun intro + Harachaman block)
+///
+/// The zimmun (3/10) and dining-status variants are no longer user toggles —
+/// the full text is shown with rubric instructions / parentheses instead.
 enum MealType { regular, seudatMitzvah, shevaBrachot, britMilah }
-
-/// Zimmun mode for Birkat HaMazon. Transient — NOT persisted.
-/// individual = no zimmun (eating alone / fewer than 3)
-/// three      = zimmun of 3 (without "אלהינו")
-/// ten        = zimmun of 10 (with "אלהינו")
-enum ZimmunMode { individual, three, ten }
-
-/// Whose table the meal is eaten at — drives the Harachaman blessing for
-/// the host. Transient — NOT persisted.
-/// ownTable     = eating at one's own table
-/// parentsTable = eating at one's parents' table (adds אבי מורי / אמי מורתי)
-/// guest        = guest at someone else's table
-enum DiningStatus { ownTable, parentsTable, guest }
 
 /// Food type(s) for Berachah Me'ein Shalosh. A user may bless on any
 /// combination; recitation order is always mezonot → gefen → perot.

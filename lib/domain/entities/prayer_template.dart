@@ -30,6 +30,10 @@ class TemplateEntry with _$TemplateEntry {
     // expansion) will carry this groupId, causing them to be grouped into a
     // single collapsible accordion in the presentation layer.
     @Default('') @JsonKey(name: 'group_id') String groupId,
+    // Non-empty: segments produced by this entry carry this subGroupId, and the
+    // presentation layer renders consecutive same-subGroupId segments INSIDE a
+    // group accordion as one nested accordion (e.g. vidui inside tachanun).
+    @Default('') @JsonKey(name: 'sub_group_id') String subGroupId,
   }) = _TemplateEntry;
 
   factory TemplateEntry.fromJson(Map<String, dynamic> json) =>

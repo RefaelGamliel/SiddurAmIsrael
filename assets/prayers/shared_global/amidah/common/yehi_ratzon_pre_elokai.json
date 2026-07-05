@@ -1,10 +1,10 @@
 {
   "id": "yehi_ratzon_pre_elokai",
-  "optional": true,
   "sections": [
     {
       "text": "יִהְיוּ לְרָצוֹן אִמְרֵי פִי וְהֶגְיוֹן לִבִּי לְפָנֶֽיךָ יְהֹוָה צוּרִי וְגוֹאֲלִי:",
-      "condition_flags": [], "exclude_flags": []
+      "condition_flags": [],
+      "exclude_flags": []
     }
   ]
 }

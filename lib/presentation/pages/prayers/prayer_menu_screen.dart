@@ -40,6 +40,7 @@ Widget buildPrayerReader(
       textDirection: TextDirection.rtl,
       child: PrayerScreen(
         title: title,
+        service: service,
         contentProvider: _providerFor(service),
         onOpenSettings: onOpenSettings,
       ),

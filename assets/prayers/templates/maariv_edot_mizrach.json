@@ -155,7 +155,7 @@
       "exclude_flags": []
     },
     {
-      "segment_id": "kaddish_titkabal",
+      "sub_template_id": "kaddish_titkabal",
       "condition_flags": [
         "purim",
         "with_minyan"

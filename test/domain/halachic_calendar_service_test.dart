@@ -115,6 +115,23 @@ void main() {
       gender: Gender.female,
     );
 
+    // ── Kriat HaTorah (Mon/Thu upcoming parashah) ────────────────────────────
+    group('kriat hatorah mon/thu', () {
+      test('regular Monday emits kriat_hatorah_mon_thu + upcoming parashah', () {
+        // Mon 4 Nov 2024 (~3 Cheshvan 5785) — a plain weekday. The reading is
+        // the start of the upcoming Shabbat's sidra (Lech Lecha, 9 Nov).
+        final f = service.flagsFor(DateTime(2024, 11, 4), ctx);
+        expect(f.flags, contains(DayFlag.kriatHatorahMonThu));
+        expect(f.upcomingParshah, isNotNull);
+        expect(f.upcomingParshah, 'lech_lecha');
+      });
+
+      test('regular Sunday has no Mon/Thu reading', () {
+        final f = service.flagsFor(DateTime(2024, 11, 3), ctx);
+        expect(f.flags, isNot(contains(DayFlag.kriatHatorahMonThu)));
+      });
+    });
+
     // ── Day identification ───────────────────────────────────────────────────
     group('day identification', () {
       test('1 Tishri → rosh_hashanah', () {

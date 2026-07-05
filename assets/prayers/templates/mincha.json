@@ -44,6 +44,15 @@
       "allowed_nusach": []
     },
     {
+      "segment_id": "tikon_tefilati",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": [
+        "edot_mizrach"
+      ]
+    },
+    {
       "sub_template_id": "chatzi_kaddish",
       "condition_flags": [
         "with_minyan"
@@ -118,7 +127,8 @@
       "optional": false,
       "allowed_nusach": [
         "ashkenaz"
-      ]
+      ],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "tachanun_sfard",
@@ -129,7 +139,8 @@
       "optional": false,
       "allowed_nusach": [
         "sfard"
-      ]
+      ],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "tachanun_edot_mizrach",
@@ -140,7 +151,8 @@
       "optional": false,
       "allowed_nusach": [
         "edot_mizrach"
-      ]
+      ],
+      "group_id": "tachanun"
     },
     {
       "segment_id": "avinu_malkeinu",

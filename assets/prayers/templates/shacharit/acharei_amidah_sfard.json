@@ -3,6 +3,16 @@
   "name": "shacharit_acharei_amidah_sfard",
   "segments": [
     {
+      "segment_id": "selichot_header",
+      "condition_flags": [
+        "fast_day",
+        "with_minyan"
+      ],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
       "sub_template_id": "selichot_10_tevet",
       "condition_flags": [
         "fast_10_tevet",
@@ -34,7 +44,8 @@
       ],
       "exclude_flags": [
         "skip_tachanun"
-      ]
+      ],
+      "group_id": "selichot_bahab"
     },
     {
       "sub_template_id": "selichot_bahab_chamishi",
@@ -44,7 +55,8 @@
       ],
       "exclude_flags": [
         "skip_tachanun"
-      ]
+      ],
+      "group_id": "selichot_bahab"
     },
     {
       "sub_template_id": "selichot_bahab_sheni_batra",
@@ -54,7 +66,8 @@
       ],
       "exclude_flags": [
         "skip_tachanun"
-      ]
+      ],
+      "group_id": "selichot_bahab"
     },
     {
       "segment_id": "avinu_malkeinu",
@@ -75,7 +88,8 @@
         "skip_tachanun"
       ],
       "optional": false,
-      "allowed_nusach": []
+      "allowed_nusach": [],
+      "group_id": "tachanun"
     },
     {
       "sub_template_id": "chatzi_kaddish",
@@ -641,7 +655,7 @@
       "exclude_flags": [
         "skip_tachanun"
       ],
-      "optional": false,
+      "optional": true,
       "allowed_nusach": []
     },
     {

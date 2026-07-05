@@ -102,6 +102,7 @@ const _segmentLabels = <String, String>{
   'tefila_ledavid_ps86': 'תפילה לדוד',
   'petihat_eliyahu': 'פתיחת אליהו',
   'korbanot_mincha': 'קרבנות',
+  'tikon_tefilati': '',
   // ── Shacharit structure ────────────────────────────────────────────────────
   'barchu': 'ברכו',
   'shema': 'קריאת שמע',
@@ -262,6 +263,9 @@ const _segmentLabels = <String, String>{
   'amidah_musaf_intermediate_chm_pesach': 'חול המועד פסח',
   'amidah_musaf_intermediate_chm_sukkot': 'חול המועד סוכות',
   // ── Tachanun ───────────────────────────────────────────────────────────────
+  // Empty: the "תחנון" heading is supplied by the group accordion title; this
+  // segment only serves as the nav anchor inside the group.
+  'tachanun_header': '',
   'tachanun': 'תחנון',
   'tachanun_nfilat_apayim': 'נפילת אפים',
   'tachanun_monday_thursday_addition': '',
@@ -277,8 +281,14 @@ const _segmentLabels = <String, String>{
   'vesalachta': '',
   'el_melech_yoshev': '',
   'el_melech_yoshev_em': '',
+  'el_melech_yoshev_em_montue': '',
   'yud_gimel_midot_em': '',
   // ── Selichot (fast days + BaHaB) ─────────────────────────────────────────
+  // Section header shown above the fast-day selichot (also a nav anchor).
+  'selichot_header': 'סליחות',
+  // End-of-selichot block, rendered as a default-open accordion so it can be
+  // collapsed when not said. Explicit label overrides the empty selichot_ fallback.
+  'selichot_shared_7': 'אֵל רַחוּם שְׁמֶךָ',
   'selichot_gedalia': 'סליחות',
   'selichot_10_tevet': 'סליחות',
   'selichot_esther': 'סליחות',
@@ -300,15 +310,14 @@ const _segmentLabels = <String, String>{
   'inline_toggle_kohanim': '',
   // ── Birkat HaMazon ───────────────────────────────────────────────────────
   'inline_toggle_meal_type': '',
-  'inline_toggle_zimmun': '',
-  'inline_toggle_dining': '',
-  'bhm_shir_hamaalot': '',
+  // Pre-bentching psalms — each a collapsible accordion (user opens what fits).
+  'bhm_shir_hamaalot': 'שיר המעלות',
   'bhm_naharot': 'על נהרות בבל',
-  'bhm_zimmun_open': 'זימון',
+  // Zimmun text lives inside the "זימון" group accordion — no per-segment header.
+  'bhm_zimmun_open': '',
   'bhm_zimmun_sheva_intro': '',
   'bhm_zimmun_brit_intro': '',
-  'bhm_zimmun_main_three': '',
-  'bhm_zimmun_main_ten': '',
+  'bhm_zimmun_main': '',
   'bhm_zimmun_main_sheva': '',
   'bhm_hazan_a': 'ברכת הזן',
   'bhm_hazan_kaamur': '',
@@ -330,7 +339,6 @@ const _segmentLabels = <String, String>{
   'bhm_dining_own_male': '',
   'bhm_dining_own_female': '',
   'bhm_dining_parents': '',
-  'bhm_dining_guest': '',
   'bhm_dining_continuation': '',
   'bhm_guest_bracha': 'ברכת האורח',
   'bhm_bamarom': '',
@@ -344,9 +352,8 @@ const _segmentLabels = <String, String>{
 
   // ── Birkat HaMazon — Edot HaMizrach ──────────────────────────────────────
   'bhm_em_lamnatzeach': '',
-  'bhm_em_zimmun_open': 'זימון',
-  'bhm_em_zimmun_main_three': '',
-  'bhm_em_zimmun_main_ten': '',
+  'bhm_em_zimmun_open': '',
+  'bhm_em_zimmun_main': '',
   'bhm_em_hazan': 'ברכת הזן',
   'bhm_em_nodeh': 'ברכת הארץ',
   'bhm_em_al_hanisim_header': '',
@@ -407,4 +414,7 @@ const _segmentLabels = <String, String>{
   'hoshanot_day_5': 'הושענות',
   'hoshanot_day_6': 'הושענות',
   'hoshanot_hoshana_rabba': 'הושענות — הושענא רבא',
+
+  // ── Selichot (collapsible omitted sections) ─────────────────────────────────
+  'selichot_closing_omitted': 'קטעים מושמטים',
 };

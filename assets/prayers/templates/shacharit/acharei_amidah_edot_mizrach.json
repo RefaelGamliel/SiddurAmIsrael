@@ -3,13 +3,24 @@
   "name": "shacharit_acharei_amidah_edot_mizrach",
   "segments": [
     {
+      "segment_id": "selichot_header",
+      "condition_flags": [
+        "fast_day",
+        "with_minyan"
+      ],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
       "sub_template_id": "tachanun_edot_mizrach",
       "condition_flags": [],
       "exclude_flags": [
         "skip_tachanun"
       ],
       "optional": false,
-      "allowed_nusach": []
+      "allowed_nusach": [],
+      "group_id": "tachanun"
     },
     {
       "segment_id": "yehi_shem",
@@ -568,7 +579,7 @@
       "exclude_flags": [
         "skip_lamenatzeach"
       ],
-      "optional": false,
+      "optional": true,
       "allowed_nusach": []
     },
     {

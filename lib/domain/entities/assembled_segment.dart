@@ -12,5 +12,9 @@ class AssembledSegment with _$AssembledSegment {
     // 'chazarat_hashatz'). Consecutive segments with the same groupId are
     // rendered as a single accordion by the presentation layer.
     @Default('') String groupId,
+    // Non-empty when this segment belongs to a nested sub-accordion INSIDE its
+    // group (e.g. 'vidui' inside the 'tachanun' group). Consecutive segments
+    // with the same subGroupId render as one nested accordion.
+    @Default('') String subGroupId,
   }) = _AssembledSegment;
 }

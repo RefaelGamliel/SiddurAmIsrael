@@ -47,6 +47,8 @@ class PrayerAssembler implements IPrayerAssembler {
     // When non-empty, overrides every assembled segment's groupId so that an
     // entire sub-template expansion can be grouped into a single accordion.
     String inheritedGroupId = '',
+    // Like [inheritedGroupId] but for the nested sub-accordion id.
+    String inheritedSubGroupId = '',
   }) async {
     final template = await _repository.loadTemplate(templateId);
     final contextKeys = _buildContextKeys(userContext);
@@ -60,12 +62,15 @@ class PrayerAssembler implements IPrayerAssembler {
       // then the entry's own group_id.
       final effectiveGroup =
           inheritedGroupId.isNotEmpty ? inheritedGroupId : entry.groupId;
+      final effectiveSubGroup =
+          inheritedSubGroupId.isNotEmpty ? inheritedSubGroupId : entry.subGroupId;
 
       if (entry.subTemplateId.isNotEmpty) {
         final subSegments = await _assemble(
           templateId: entry.subTemplateId,
           userContext: userContext,
           inheritedGroupId: effectiveGroup,
+          inheritedSubGroupId: effectiveSubGroup,
         );
         results.addAll(subSegments);
         continue;
@@ -81,6 +86,7 @@ class PrayerAssembler implements IPrayerAssembler {
         resolvedText: _assembleSections(segment.sections, contextKeys),
         optional: entry.optional || segment.optional,
         groupId: effectiveGroup,
+        subGroupId: effectiveSubGroup,
       ));
     }
 

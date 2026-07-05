@@ -62,10 +62,12 @@ void main() {
       expect(ctx.nusach, 'sfard');
     });
 
-    test('reflects updated isInIsrael', () {
-      container.read(isInIsraelProvider.notifier).set(false);
-      final ctx = container.read(userContextProvider);
-      expect(ctx.isInIsrael, isFalse);
+    test('isInIsrael derives from the selected city', () {
+      // Default city (Jerusalem) → in Israel.
+      expect(container.read(userContextProvider).isInIsrael, isTrue);
+      // Selecting a chu"l city flips it.
+      container.read(selectedCityIdProvider.notifier).set('new_york');
+      expect(container.read(userContextProvider).isInIsrael, isFalse);
     });
 
     test('reflects updated gender', () {

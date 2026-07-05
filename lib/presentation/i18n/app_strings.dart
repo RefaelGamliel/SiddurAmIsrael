@@ -292,6 +292,49 @@ const Map<String, Map<String, String>> _table = {
     'ru': 'Поддержка',
     'fr': 'Support',
   },
+  // ── Compass (prayer direction toward Har HaBayit) ───────────────────────
+  'compass_title': {
+    'he': 'כיוון התפילה',
+    'en': 'Prayer direction',
+    'ru': 'Направление молитвы',
+    'fr': 'Direction de la prière',
+  },
+  'compass_tooltip': {
+    'he': 'כיוון התפילה',
+    'en': 'Prayer direction',
+    'ru': 'Направление молитвы',
+    'fr': 'Direction de la prière',
+  },
+  'compass_facing': {
+    'he': 'אתה פונה להר הבית',
+    'en': "You're facing the Temple Mount",
+    'ru': 'Вы обращены к Храмовой горе',
+    'fr': 'Vous êtes face au mont du Temple',
+  },
+  'compass_instruction': {
+    'he': 'החזק את המכשיר במאוזן וסובב עד שהחץ פונה כלפי מעלה',
+    'en': 'Hold the device flat and turn until the arrow points up',
+    'ru': 'Держите устройство горизонтально и поворачивайте, пока стрелка не укажет вверх',
+    'fr': "Tenez l'appareil à plat et tournez jusqu'à ce que la flèche pointe vers le haut",
+  },
+  'compass_no_sensor': {
+    'he': 'אין חיישן מצפן במכשיר זה',
+    'en': 'This device has no compass sensor',
+    'ru': 'На этом устройстве нет датчика компаса',
+    'fr': "Cet appareil n'a pas de boussole",
+  },
+  'compass_note_gps': {
+    'he': 'הכיוון מחושב לפי מיקומך הנוכחי',
+    'en': 'Direction based on your current location',
+    'ru': 'Направление по вашему текущему местоположению',
+    'fr': 'Direction selon votre position actuelle',
+  },
+  'compass_note_city': {
+    'he': 'מיקום מדויק לא זמין · הכיוון לפי {city}',
+    'en': 'Precise location unavailable · direction for {city}',
+    'ru': 'Точное местоположение недоступно · направление для {city}',
+    'fr': 'Position précise indisponible · direction pour {city}',
+  },
 };
 
 /// Resolves framework-UI strings for the active interface language.

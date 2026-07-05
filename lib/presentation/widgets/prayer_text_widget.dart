@@ -11,7 +11,15 @@ import 'package:siddur_am_israel_chai/presentation/theme/app_colors.dart';
 import 'package:siddur_am_israel_chai/presentation/widgets/rich_prayer_text.dart';
 
 // Optional segments that should start EXPANDED (open accordion by default).
-const _initiallyExpanded = <String>{'birkat_kohanim_bracha'};
+const _initiallyExpanded = <String>{
+  'birkat_kohanim_bracha',
+  // Mon/Thu "יהי רצון" before the 2nd Ashrei (Ashkenaz + Sfard).
+  'yehi_ratzon_mon_thu',
+  // "למנצח" in Edot Mizrach Shacharit (optional only on the EM template).
+  'lamenatzeach',
+  // End-of-selichot block ("א-ל רחום שמך…") on fast days (Ashkenaz/Sfard).
+  'selichot_shared_7',
+};
 
 // Segments that are part of a tight block: no trailing spacer so consecutive
 // segments flow without visual gaps. (Continuous in-line flow of a single
@@ -69,24 +77,15 @@ class _PrayerInlineToggle extends ConsumerWidget {
     if (segmentId == 'inline_toggle_kohanim') {
       return _buildKohanumToggle(ref);
     }
-    // Birkat HaMazon meal-context selectors.
+    // Birkat HaMazon meal-type selector (שבע ברכות / ברית מילה).
     // "רגילה" is not shown — it is the implicit default when nothing is
     // selected. Tapping the active chip deselects it (resets to regular).
     if (segmentId == 'inline_toggle_meal_type') {
       final value = ref.watch(mealTypeProvider);
-      final nusach = ref.watch(nusachProvider);
-      // EM has no distinct seudat-mitzvah text — only sheva brachot / brit
-      // milah produce different content, so that option is omitted there.
-      final options = nusach == 'edot_mizrach'
-          ? const [
-              (MealType.shevaBrachot, 'שבע ברכות'),
-              (MealType.britMilah, 'ברית מילה'),
-            ]
-          : const [
-              (MealType.seudatMitzvah, 'סעודת מצוה'),
-              (MealType.shevaBrachot, 'שבע ברכות'),
-              (MealType.britMilah, 'ברית מילה'),
-            ];
+      const options = [
+        (MealType.shevaBrachot, 'שבע ברכות'),
+        (MealType.britMilah, 'ברית מילה'),
+      ];
       return _buildSegmentedChoice<MealType>(
         current: value,
         options: options,
@@ -94,34 +93,7 @@ class _PrayerInlineToggle extends ConsumerWidget {
           // Tap selected chip → deselect (regular). Tap other → select.
           final next = v == value ? MealType.regular : v;
           ref.read(mealTypeProvider.notifier).set(next);
-          if (next == MealType.shevaBrachot || next == MealType.britMilah) {
-            ref.read(zimmunModeProvider.notifier).set(ZimmunMode.ten);
-          }
         },
-      );
-    }
-    if (segmentId == 'inline_toggle_zimmun') {
-      final value = ref.watch(zimmunModeProvider);
-      return _buildSegmentedChoice<ZimmunMode>(
-        current: value,
-        options: const [
-          (ZimmunMode.individual, 'ביחיד'),
-          (ZimmunMode.three, 'זימון בשלושה'),
-          (ZimmunMode.ten, 'זימון בעשרה'),
-        ],
-        onSelect: (v) => ref.read(zimmunModeProvider.notifier).set(v),
-      );
-    }
-    if (segmentId == 'inline_toggle_dining') {
-      final value = ref.watch(diningStatusProvider);
-      return _buildSegmentedChoice<DiningStatus>(
-        current: value,
-        options: const [
-          (DiningStatus.ownTable, 'על שולחני'),
-          (DiningStatus.parentsTable, 'על שולחן הורַי'),
-          (DiningStatus.guest, 'אורח'),
-        ],
-        onSelect: (v) => ref.read(diningStatusProvider.notifier).set(v),
       );
     }
     // Me'ein Shalosh: multi-select food types + small Eretz-Yisrael toggles.
@@ -129,56 +101,25 @@ class _PrayerInlineToggle extends ConsumerWidget {
       return _buildMeeinToggle(ref);
     }
     final (label, value, onChanged) = _resolve(ref);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Material(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: Row(
-            textDirection: TextDirection.rtl,
-            children: [
-              Expanded(
-                child: Text(
-                  label,
-                  textDirection: TextDirection.rtl,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.primaryDarker,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Transform.scale(
-                scale: 0.8,
-                child: Switch(
-                  value: value,
-                  onChanged: onChanged,
-                  activeColor: AppColors.primary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return _InlineCheckRow(
+      label: label,
+      value: value,
+      onChanged: onChanged,
     );
   }
 
   Widget _buildKohanumToggle(WidgetRef ref) {
-    final einKohanim = ref.watch(einKohanumProvider);
-    final yeshKohanim = !einKohanim;
+    final einKohanim = ref.watch(einKohanimProvider);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: Material(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(10),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: Row(
             textDirection: TextDirection.rtl,
             children: [
-              // Section title on the right
               const Text(
                 'ברכת כהנים',
                 style: TextStyle(
@@ -188,32 +129,12 @@ class _PrayerInlineToggle extends ConsumerWidget {
                 ),
               ),
               const Spacer(),
-              // "יש כהנים" label + switch
-              GestureDetector(
-                onTap: () => ref
-                    .read(einKohanumProvider.notifier)
-                    .set(yeshKohanim),
-                child: Text(
-                  'יש כהנים',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: yeshKohanim
-                        ? AppColors.primaryDarker
-                        : AppColors.primaryDarker.withValues(alpha: 0.45),
-                    fontWeight: yeshKohanim
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                  ),
-                ),
-              ),
-              Transform.scale(
-                scale: 0.8,
-                child: Switch(
-                  value: yeshKohanim,
-                  onChanged: (v) =>
-                      ref.read(einKohanumProvider.notifier).set(!v),
-                  activeColor: AppColors.primary,
-                ),
+              _InlineCheckRow(
+                label: 'אין כהנים',
+                value: einKohanim,
+                onChanged: (v) {
+                  ref.read(einKohanimProvider.notifier).state = v;
+                },
               ),
             ],
           ),
@@ -458,9 +379,9 @@ class _PrayerInlineToggle extends ConsumerWidget {
         );
       case 'inline_toggle_kohanim':
         return (
-          'יש כהנים',
-          !ref.watch(einKohanumProvider),
-          (v) => ref.read(einKohanumProvider.notifier).set(!v),
+          'אין כהנים',
+          ref.watch(einKohanimProvider),
+          (v) => ref.read(einKohanimProvider.notifier).state = v,
         );
       default:
         return ('', false, (_) {});
@@ -473,10 +394,57 @@ const _inlineToggleIds = {
   'inline_toggle_shaliach_tzibbur',
   'inline_toggle_kohanim',
   'inline_toggle_meal_type',
-  'inline_toggle_zimmun',
-  'inline_toggle_dining',
   'inline_toggle_meein',
 };
+
+/// Compact checkbox row used for in-prayer boolean choices (e.g. "אין כהנים",
+/// "אני שליח ציבור", "אין תחנון"). Label is on the right (RTL), checkbox on the
+/// left. The entire row is tappable.
+class _InlineCheckRow extends StatelessWidget {
+  const _InlineCheckRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final void Function(bool) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          textDirection: TextDirection.rtl,
+          children: [
+            Text(
+              label,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 14,
+                color: value
+                    ? AppColors.primaryDarker
+                    : AppColors.primaryDarker.withValues(alpha: 0.55),
+                fontWeight: value ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+            Checkbox(
+              value: value,
+              onChanged: (v) => onChanged(v ?? false),
+              activeColor: AppColors.primary,
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class PrayerTextWidget extends ConsumerWidget {
   const PrayerTextWidget({super.key, required this.segment});
@@ -514,6 +482,13 @@ class PrayerTextWidget extends ConsumerWidget {
         );
       }
       return tile;
+    }
+
+    // Pure nav-anchor segments (empty body + no visible label, e.g.
+    // `tachanun_header`) occupy no vertical space. They still attach their
+    // GlobalKey so the section-nav jump can scroll to them.
+    if (segment.resolvedText.isEmpty && label.isEmpty) {
+      return const SizedBox.shrink();
     }
 
     final noTrailing = _noTrailingSpace.contains(segment.id);

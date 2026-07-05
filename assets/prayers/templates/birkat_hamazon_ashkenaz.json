@@ -12,7 +12,16 @@
       "condition_flags": [
         "birkat_festive_psalm"
       ],
-      "exclude_flags": []
+      "exclude_flags": [],
+      "optional": false
+    },
+    {
+      "segment_id": "bhm_shir_hamaalot",
+      "condition_flags": [],
+      "exclude_flags": [
+        "birkat_festive_psalm"
+      ],
+      "optional": true
     },
     {
       "segment_id": "bhm_naharot",
@@ -23,58 +32,42 @@
       "optional": true
     },
     {
-      "segment_id": "inline_toggle_zimmun",
-      "condition_flags": [],
-      "exclude_flags": []
-    },
-    {
       "segment_id": "bhm_zimmun_open",
-      "condition_flags": [
-        "zimmun_active"
-      ],
-      "exclude_flags": []
+      "condition_flags": [],
+      "exclude_flags": [],
+      "group_id": "zimmun"
     },
     {
       "segment_id": "bhm_zimmun_sheva_intro",
       "condition_flags": [
-        "zimmun_active",
         "meal_sheva_brachot"
       ],
-      "exclude_flags": []
+      "exclude_flags": [],
+      "group_id": "zimmun"
     },
     {
       "segment_id": "bhm_zimmun_brit_intro",
       "condition_flags": [
-        "zimmun_active",
         "meal_brit_milah"
       ],
-      "exclude_flags": []
+      "exclude_flags": [],
+      "group_id": "zimmun"
     },
     {
-      "segment_id": "bhm_zimmun_main_three",
-      "condition_flags": [
-        "zimmun_three"
-      ],
+      "segment_id": "bhm_zimmun_main",
+      "condition_flags": [],
       "exclude_flags": [
         "meal_sheva_brachot"
-      ]
-    },
-    {
-      "segment_id": "bhm_zimmun_main_ten",
-      "condition_flags": [
-        "zimmun_ten"
       ],
-      "exclude_flags": [
-        "meal_sheva_brachot"
-      ]
+      "group_id": "zimmun"
     },
     {
       "segment_id": "bhm_zimmun_main_sheva",
       "condition_flags": [
-        "zimmun_active",
         "meal_sheva_brachot"
       ],
-      "exclude_flags": []
+      "exclude_flags": [],
+      "group_id": "zimmun"
     },
     {
       "segment_id": "bhm_hazan_a",
@@ -180,14 +173,8 @@
       "exclude_flags": []
     },
     {
-      "segment_id": "inline_toggle_dining",
-      "condition_flags": [],
-      "exclude_flags": []
-    },
-    {
       "segment_id": "bhm_dining_own_male",
       "condition_flags": [
-        "dining_own_table",
         "gender_male"
       ],
       "exclude_flags": []
@@ -195,23 +182,13 @@
     {
       "segment_id": "bhm_dining_own_female",
       "condition_flags": [
-        "dining_own_table",
         "gender_female"
       ],
       "exclude_flags": []
     },
     {
       "segment_id": "bhm_dining_parents",
-      "condition_flags": [
-        "dining_parents"
-      ],
-      "exclude_flags": []
-    },
-    {
-      "segment_id": "bhm_dining_guest",
-      "condition_flags": [
-        "dining_guest"
-      ],
+      "condition_flags": [],
       "exclude_flags": []
     },
     {
@@ -268,8 +245,7 @@
     {
       "segment_id": "bhm_sheva_kos",
       "condition_flags": [
-        "meal_sheva_brachot",
-        "zimmun_active"
+        "meal_sheva_brachot"
       ],
       "exclude_flags": []
     },

@@ -13,30 +13,16 @@
       "exclude_flags": []
     },
     {
-      "segment_id": "inline_toggle_zimmun",
-      "condition_flags": [],
-      "exclude_flags": []
-    },
-    {
       "segment_id": "bhm_em_zimmun_open",
-      "condition_flags": [
-        "zimmun_active"
-      ],
-      "exclude_flags": []
+      "condition_flags": [],
+      "exclude_flags": [],
+      "group_id": "zimmun"
     },
     {
-      "segment_id": "bhm_em_zimmun_main_three",
-      "condition_flags": [
-        "zimmun_three"
-      ],
-      "exclude_flags": []
-    },
-    {
-      "segment_id": "bhm_em_zimmun_main_ten",
-      "condition_flags": [
-        "zimmun_ten"
-      ],
-      "exclude_flags": []
+      "segment_id": "bhm_em_zimmun_main",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "group_id": "zimmun"
     },
     {
       "segment_id": "bhm_em_hazan",
@@ -190,8 +176,7 @@
     {
       "segment_id": "bhm_em_sheva_kos",
       "condition_flags": [
-        "meal_sheva_brachot",
-        "zimmun_active"
+        "meal_sheva_brachot"
       ],
       "exclude_flags": []
     },

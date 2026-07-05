@@ -3,13 +3,23 @@
   "name": "תחנון",
   "segments": [
     {
+      "segment_id": "tachanun_header",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
       "condition_flags": [
         "with_minyan"
       ],
-      "exclude_flags": [],
+      "exclude_flags": [
+        "fast_day"
+      ],
       "optional": true,
       "allowed_nusach": [],
-      "sub_template_id": "tachanun_vidui"
+      "sub_template_id": "tachanun_vidui",
+      "sub_group_id": "vidui"
     },
     {
       "segment_id": "vehu_rachum",

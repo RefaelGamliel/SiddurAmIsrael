@@ -459,6 +459,7 @@ The override affects `HalachicCalendarService`, `ServiceTimeResolver`, and all p
 | **Yom Tov full services** | 🚫 Out of scope | Yom Tov Musaf Amidah, full Hallel Shacharit |
 | **Tisha B'Av full service** | ⚠️ Partial | Nachem at Mincha is implemented; Shacharit Kinot and abbreviated Psukei DeZimra are not |
 | **Kiddush Levana** | 📋 Planned | Placeholder in the Berachot tab; content not yet implemented |
+| **GPS Eretz-Yisrael detection** | ⚠️ Approximate | When location mode is GPS, "in Eretz Yisrael" (which drives Yom Tov Sheni and similar din) is decided by a coarse lat/lng bounding box (`lat 29.4–33.4`, `lng 34.2–35.95`). It covers all of Israel — including Judea & Samaria — with no false negatives, but the rectangle also catches slivers of neighbouring countries (e.g. Amman & the western Jordan Valley, southern Lebanon around Tyre, north-east Sinai), so a user physically inside one of those border areas would be treated as in Israel. Selecting a fixed city instead is always exact. A precise border polygon is a future refinement. |
 
 ---
 

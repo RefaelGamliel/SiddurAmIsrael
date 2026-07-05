@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:kosher_dart/kosher_dart.dart';
 import 'package:siddur_am_israel_chai/core/calendar/hebrew_date.dart';
+import 'package:siddur_am_israel_chai/core/data/cities.dart';
 import 'package:siddur_am_israel_chai/data/datasources/local/gra_ssy_datasource.dart';
 import 'package:siddur_am_israel_chai/data/datasources/local/kriah_datasource.dart';
 import 'package:siddur_am_israel_chai/data/datasources/local/omer_mapping_datasource.dart';
@@ -19,6 +20,7 @@ import 'package:siddur_am_israel_chai/data/repositories/sukkot_korbanot_reposito
 import 'package:siddur_am_israel_chai/domain/entities/assembled_segment.dart';
 import 'package:siddur_am_israel_chai/domain/entities/day_flags.dart';
 import 'package:siddur_am_israel_chai/domain/entities/omer_day.dart';
+import 'package:siddur_am_israel_chai/domain/entities/prayer_zmanim.dart';
 import 'package:siddur_am_israel_chai/domain/entities/user_context.dart';
 import 'package:siddur_am_israel_chai/domain/repositories/i_gra_ssy_repository.dart';
 import 'package:siddur_am_israel_chai/domain/repositories/i_kriah_repository.dart';
@@ -30,7 +32,9 @@ import 'package:siddur_am_israel_chai/domain/services/halachic_calendar_service.
 import 'package:siddur_am_israel_chai/domain/services/i_calendar_flag_provider.dart';
 import 'package:siddur_am_israel_chai/domain/services/i_prayer_assembler.dart';
 import 'package:siddur_am_israel_chai/domain/services/prayer_assembler.dart';
+import 'package:siddur_am_israel_chai/domain/services/prayer_zmanim_service.dart';
 import 'package:siddur_am_israel_chai/domain/services/service_time_resolver.dart';
+import 'package:siddur_am_israel_chai/presentation/providers/calendar_providers.dart';
 
 // ── Dev date/time override (debug builds only) ───────────────────────────────
 
@@ -48,6 +52,24 @@ DateTime _effectiveNow(Ref ref) {
     return ref.watch(devDateTimeOverrideProvider) ?? DateTime.now();
   }
   return DateTime.now();
+}
+
+// Resolves the effective HEBREW-CALENDAR date. The halachic day rolls over at
+// nightfall (צאת הכוכבים), not civil midnight: once the current time is past
+// tzeit for the user's location, the calendar date — and therefore flags like
+// Ya'aleh v'Yavo / Al HaNisim — already reflect the NEXT Hebrew day. Returns a
+// noon-stamped DateTime so downstream date arithmetic is DST-safe.
+DateTime _halachicNow(Ref ref) {
+  final now = _effectiveNow(ref);
+  final city = cityById(ref.watch(selectedCityIdProvider));
+  final geo =
+      GeoLocation.setLocation(city.name, city.latitude, city.longitude, now);
+  final tzeit =
+      ComplexZmanimCalendar.intGeoLocation(geo).getTzaisGeonim8Point5Degrees();
+  final base = (tzeit != null && !now.isBefore(tzeit))
+      ? now.add(const Duration(days: 1))
+      : now;
+  return DateTime(base.year, base.month, base.day, 12);
 }
 
 // ── Persistence ──────────────────────────────────────────────────────────────
@@ -91,7 +113,8 @@ final sukkotKorbanotDatasourceProvider = Provider<SukkotKorbanotDatasource>(
 );
 
 final sukkotKorbanotRepositoryProvider = Provider<ISukkotKorbanotRepository>(
-  (ref) => SukkotKorbanotRepositoryImpl(ref.watch(sukkotKorbanotDatasourceProvider)),
+  (ref) =>
+      SukkotKorbanotRepositoryImpl(ref.watch(sukkotKorbanotDatasourceProvider)),
 );
 
 final graSsyDatasourceProvider = Provider<GraSsyDatasource>(
@@ -109,6 +132,35 @@ final kriahDatasourceProvider = Provider<KriahDatasource>(
 final kriahRepositoryProvider = Provider<IKriahRepository>(
   (ref) => KriahRepositoryImpl(ref.watch(kriahDatasourceProvider)),
 );
+
+// ── Prayer-time zmanim (notes shown inside the siddur) ───────────────────────
+
+final prayerZmanimServiceProvider =
+    Provider<PrayerZmanimService>((ref) => const PrayerZmanimService());
+
+/// The effective "now" (honours the dev override in debug builds).
+final effectiveNowProvider = Provider<DateTime>((ref) => _effectiveNow(ref));
+
+/// Zmanim for the morning service — computed for the current civil date at the
+/// effective (GPS or selected) city. Used for the Sof-zman-Shema / Tefila notes.
+final shacharitZmanimProvider = Provider<PrayerZmanim>((ref) {
+  return ref.watch(prayerZmanimServiceProvider).compute(
+        city: ref.watch(effectiveCityProvider),
+        date: ref.watch(effectiveNowProvider),
+      );
+});
+
+/// Zmanim for the Maariv night (sunset / tzeit / chatzot). Between midnight and
+/// ~dawn the night still belongs to the previous civil day's sunset, so the
+/// date is shifted back one day in the small hours.
+final maarivZmanimProvider = Provider<PrayerZmanim>((ref) {
+  final now = ref.watch(effectiveNowProvider);
+  final date = now.hour < 6 ? now.subtract(const Duration(days: 1)) : now;
+  return ref.watch(prayerZmanimServiceProvider).compute(
+        city: ref.watch(effectiveCityProvider),
+        date: date,
+      );
+});
 
 final prayerAssemblerProvider = Provider<IPrayerAssembler>(
   (ref) => PrayerAssembler(
@@ -156,12 +208,11 @@ final nusachProvider = NotifierProvider<_PersistentNotifier<String>, String>(
   ),
 );
 
-final isInIsraelProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
-  () => _PersistentNotifier<bool>(
-    read: (r) => r.getIsInIsrael(),
-    write: (r, v) => r.setIsInIsrael(v),
-  ),
-);
+/// Whether the user is in Eretz Yisrael — derived from the effective location
+/// (GPS when enabled, otherwise the selected city), not a manual toggle.
+/// Drives the Israel/chu"l liturgical differences (Yom Tov Sheni, etc.).
+final isInIsraelProvider =
+    Provider<bool>((ref) => ref.watch(effectiveCityProvider).inIsrael);
 
 final userGenderProvider =
     NotifierProvider<_PersistentNotifier<Gender>, Gender>(
@@ -249,19 +300,17 @@ final expandedSegmentsProvider =
 /// Whether the user wears a tallit gadol (default true).
 /// Used to inject [DayFlag.wearsTallitGadol] into the Shacharit context for
 /// Ashkenaz/Sfard, gating the seder atifat tallit gadol accordion.
-final isShaliachTzibburProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
+final isShaliachTzibburProvider =
+    NotifierProvider<_PersistentNotifier<bool>, bool>(
   () => _PersistentNotifier<bool>(
     read: (r) => r.getIsShaliachTzibbur(),
     write: (r, v) => r.setIsShaliachTzibbur(v),
   ),
 );
 
-final einKohanumProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
-  () => _PersistentNotifier<bool>(
-    read: (r) => r.getEinKohanim(),
-    write: (r, v) => r.setEinKohanim(v),
-  ),
-);
+/// User toggle: "אין כהנים" (no kohanim present).
+/// AutoDispose: resets to false when prayer screen unmounts.
+final einKohanimProvider = StateProvider.autoDispose<bool>((ref) => false);
 
 /// Selected city id for the Hebrew calendar's zmanim (default Jerusalem).
 final selectedCityIdProvider =
@@ -281,7 +330,8 @@ final locationModeProvider =
   ),
 );
 
-final wearsTallitGadolProvider = NotifierProvider<_PersistentNotifier<bool>, bool>(
+final wearsTallitGadolProvider =
+    NotifierProvider<_PersistentNotifier<bool>, bool>(
   () => _PersistentNotifier<bool>(
     read: (r) => r.getWearsTallitGadol(),
     write: (r, v) => r.setWearsTallitGadol(v),
@@ -300,18 +350,9 @@ class _TransientNotifier<T> extends Notifier<T> {
   void set(T value) => state = value;
 }
 
-final mealTypeProvider = NotifierProvider<_TransientNotifier<MealType>, MealType>(
+final mealTypeProvider =
+    NotifierProvider<_TransientNotifier<MealType>, MealType>(
   () => _TransientNotifier<MealType>(MealType.regular),
-);
-
-final zimmunModeProvider =
-    NotifierProvider<_TransientNotifier<ZimmunMode>, ZimmunMode>(
-  () => _TransientNotifier<ZimmunMode>(ZimmunMode.individual),
-);
-
-final diningStatusProvider =
-    NotifierProvider<_TransientNotifier<DiningStatus>, DiningStatus>(
-  () => _TransientNotifier<DiningStatus>(DiningStatus.ownTable),
 );
 
 // ── Berachah Me'ein Shalosh (transient — per-occasion) ───────────────────────
@@ -339,7 +380,7 @@ final meeinMezonotEyProvider = NotifierProvider<_TransientNotifier<bool>, bool>(
 // ── Derived / computed ───────────────────────────────────────────────────────
 
 final hebrewDateProvider = Provider<HebrewDate>(
-  (ref) => HebrewDate.fromGregorian(_effectiveNow(ref)),
+  (ref) => HebrewDate.fromGregorian(_halachicNow(ref)),
 );
 
 final userContextProvider = Provider<UserContext>((ref) {
@@ -356,7 +397,7 @@ final userContextProvider = Provider<UserContext>((ref) {
     purimDate: purimDate,
     withMinyan: withMinyan,
   );
-  final dayFlags = service.flagsFor(_effectiveNow(ref), baseCtx);
+  final dayFlags = service.flagsFor(_halachicNow(ref), baseCtx);
   final flags = <String>{
     ...dayFlags.flags,
     if (withMinyan) DayFlag.withMinyan,
@@ -434,14 +475,6 @@ const _flowGroups = <_FlowGroup>[
     'bhm_rachem_body',
     'bhm_rachem_chatima',
   ]),
-  // Birkat HaMazon (A/S): הרחמן הוא יברך … אותנו ואת כל אשר לנו
-  _FlowGroup([
-    'bhm_dining_own_male',
-    'bhm_dining_own_female',
-    'bhm_dining_parents',
-    'bhm_dining_guest',
-    'bhm_dining_continuation',
-  ]),
   // Me'ein Shalosh: opening + ועל תנובת הארץ … בקדושה ובטהרה
   _FlowGroup(['ms_opening', 'ms_eretz']),
   // Me'ein Shalosh: near-closing + period + ברוך אתה ה' … chatima
@@ -494,7 +527,7 @@ final shacharitProvider = FutureProvider<List<AssembledSegment>>((ref) {
   final baseCtx = ref.watch(userContextProvider);
   final wearsTallitGadol = ref.watch(wearsTallitGadolProvider);
   final isShaliachTzibbur = ref.watch(isShaliachTzibburProvider);
-  final einKohanim = ref.watch(einKohanumProvider);
+  final einKohanim = ref.watch(einKohanimProvider);
   final isMale = baseCtx.gender == Gender.male;
   final extra = [
     DayFlag.serviceShacharit,
@@ -536,7 +569,7 @@ final minchaProvider = FutureProvider<List<AssembledSegment>>((ref) {
     DateTime motzaei, bool inIsrael) {
   const blockedMonths = {
     JewishDate.TISHREI: [1, 2, 10, 15, 22], // RH, YK, Sukkot1, SA
-    JewishDate.NISSAN: [15, 21],             // Pesach1, Pesach7
+    JewishDate.NISSAN: [15, 21], // Pesach1, Pesach7
   };
 
   for (var delta = 1; delta <= 7; delta++) {
@@ -547,7 +580,8 @@ final minchaProvider = FutureProvider<List<AssembledSegment>>((ref) {
     final day = cal.getJewishDayOfMonth();
     final blocked = blockedMonths[m];
     if (blocked != null && blocked.contains(day)) {
-      if (delta == 7) return (onWeekday: false, onShabbat: true); // next Shabbat
+      if (delta == 7)
+        return (onWeekday: false, onShabbat: true); // next Shabbat
       return (onWeekday: true, onShabbat: false); // weekday
     }
   }
@@ -583,56 +617,29 @@ final birkatHamazonProvider =
   final assembler = ref.watch(prayerAssemblerProvider);
   final baseCtx = ref.watch(userContextProvider);
   final mealType = ref.watch(mealTypeProvider);
-  final zimmun = ref.watch(zimmunModeProvider);
-  final dining = ref.watch(diningStatusProvider);
   final flags = baseCtx.activeFlags.toSet();
 
   final extra = <String>[];
 
+  // Pre-bentching psalm: on days with no tachanun (festive days, Rosh Chodesh,
+  // etc.) and on Shabbat, only שיר המעלות is said — shown inline (no accordion).
+  // On ordinary weekdays both psalms are offered as collapsible accordions.
+  if (flags.contains(DayFlag.skipTachanun) || flags.contains(DayFlag.shabbat)) {
+    extra.add(DayFlag.birkatFestivePsalm);
+  }
+
+  // Only the meal type is user-selectable now (שבע ברכות / ברית מילה). The
+  // zimmun and dining-status variants are presented as full text with rubric
+  // instructions / parentheses, so no zimmun/dining flags are injected.
   switch (mealType) {
     case MealType.regular:
-      break;
     case MealType.seudatMitzvah:
-      extra.add(DayFlag.mealSeudatMitzvah);
+      break;
     case MealType.shevaBrachot:
       extra.add(DayFlag.mealShevaBrachot);
     case MealType.britMilah:
       extra.add(DayFlag.mealBritMilah);
   }
-
-  switch (zimmun) {
-    case ZimmunMode.individual:
-      break;
-    case ZimmunMode.three:
-      extra
-        ..add(DayFlag.zimmunActive)
-        ..add(DayFlag.zimmunThree);
-    case ZimmunMode.ten:
-      extra
-        ..add(DayFlag.zimmunActive)
-        ..add(DayFlag.zimmunTen);
-  }
-
-  switch (dining) {
-    case DiningStatus.ownTable:
-      extra.add(DayFlag.diningOwnTable);
-    case DiningStatus.parentsTable:
-      extra.add(DayFlag.diningParents);
-    case DiningStatus.guest:
-      extra.add(DayFlag.diningGuest);
-  }
-
-  // Pre-bentching psalm: Shir HaMaalot (Ps 126) on festive days (Hallel /
-  // Al HaNisim / Shabbat) or at a mitzvah meal (Seudat Mitzvah / Sheva
-  // Brachot / Brit Milah); otherwise Al Naharot Bavel (Ps 137) accordion.
-  final festive = flags.contains(DayFlag.fullHallel) ||
-      flags.contains(DayFlag.halfHallel) ||
-      flags.contains(DayFlag.alHaNisim) ||
-      flags.contains(DayFlag.shabbat) ||
-      mealType == MealType.seudatMitzvah ||
-      mealType == MealType.shevaBrachot ||
-      mealType == MealType.britMilah;
-  if (festive) extra.add(DayFlag.birkatFestivePsalm);
 
   // מַגְדִּיל → מִגְדּוֹל in the closing Harachaman. The trigger differs by
   // nusach: A/S say מִגְדּוֹל on Rosh Chodesh / Chol HaMoed; EM say it on any

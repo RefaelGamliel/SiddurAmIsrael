@@ -125,7 +125,8 @@
     {
       "segment_id": "selichot_shared_7",
       "condition_flags": [],
-      "exclude_flags": []
+      "exclude_flags": [],
+      "optional": true
     }
   ]
 }

@@ -31,111 +31,6 @@
       "allowed_nusach": []
     },
     {
-      "segment_id": "birchot_hatorah_la_asok",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "birchot_hatorah_vehaarev",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "birchot_hatorah_natan_torah",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "birchot_hatorah_pesukim",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "elu_devarim",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "petihat_eliyahu",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": true,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "adon_olam",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": true,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "seder_tzitzit_gadol_em",
-      "condition_flags": [
-        "gender_male"
-      ],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "seder_tefillin",
-      "condition_flags": [
-        "gender_male"
-      ],
-      "exclude_flags": [
-        "skip_tefillin"
-      ],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "parshat_kadesh",
-      "condition_flags": [
-        "gender_male"
-      ],
-      "exclude_flags": [
-        "skip_tefillin"
-      ],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "parshat_vehaya_ki_yeviacha",
-      "condition_flags": [
-        "gender_male"
-      ],
-      "exclude_flags": [
-        "skip_tefillin"
-      ],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "vatitpalel_channa",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
-      "segment_id": "lshem_yichud",
-      "condition_flags": [],
-      "exclude_flags": [],
-      "optional": false,
-      "allowed_nusach": []
-    },
-    {
       "segment_id": "birkot_hashachar_header",
       "condition_flags": [],
       "exclude_flags": [],
@@ -260,6 +155,111 @@
     },
     {
       "segment_id": "yehi_ratzon_shelo_yavo",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "birchot_hatorah_la_asok",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "birchot_hatorah_vehaarev",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "birchot_hatorah_natan_torah",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "birchot_hatorah_pesukim",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "elu_devarim",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "petihat_eliyahu",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": true,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "adon_olam",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": true,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "seder_tzitzit_gadol_em",
+      "condition_flags": [
+        "gender_male"
+      ],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "seder_tefillin",
+      "condition_flags": [
+        "gender_male"
+      ],
+      "exclude_flags": [
+        "skip_tefillin"
+      ],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "parshat_kadesh",
+      "condition_flags": [
+        "gender_male"
+      ],
+      "exclude_flags": [
+        "skip_tefillin"
+      ],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "parshat_vehaya_ki_yeviacha",
+      "condition_flags": [
+        "gender_male"
+      ],
+      "exclude_flags": [
+        "skip_tefillin"
+      ],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "vatitpalel_channa",
+      "condition_flags": [],
+      "exclude_flags": [],
+      "optional": false,
+      "allowed_nusach": []
+    },
+    {
+      "segment_id": "lshem_yichud",
       "condition_flags": [],
       "exclude_flags": [],
       "optional": false,
